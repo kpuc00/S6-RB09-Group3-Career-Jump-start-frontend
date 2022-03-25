@@ -8,6 +8,7 @@ import {
   EuiFormRow,
   EuiFieldText,
   EuiButtonIcon,
+  EuiFieldPassword,
   EuiSpacer,
 } from "@elastic/eui";
 
@@ -30,7 +31,7 @@ const Login = () => {
               <EuiFieldText name="email" />
             </EuiFormRow>
             <EuiFormRow id="password" label="Password">
-              <EuiFieldText name="password" />
+              <EuiFieldPassword name="password" />
             </EuiFormRow>
             <EuiSpacer size="m" />
             <EuiButtonIcon
