@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import {
   EuiPage,
   EuiPageBody,
@@ -11,8 +12,36 @@ import {
   EuiFieldPassword,
   EuiSpacer,
 } from "@elastic/eui";
+import {
+  loginUser,
+  selectLoading,
+  selectUser,
+} from "../../features/auth/authSlice";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const loading = useSelector(selectLoading);
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    switch (e.target.id) {
+      case "email":
+        setEmail(e.target.value);
+        break;
+      case "password":
+        setPassword(e.target.value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  function submitForm() {
+    dispatch(loginUser({ email, password }));
+  }
+
   return (
     <EuiPage paddingSize="none">
       <EuiPageBody paddingSize="l">
@@ -24,18 +53,20 @@ const Login = () => {
         >
           <EuiText textAlign="center">
             <h1>Login</h1>
+            {loading && console.log("aaa")}
           </EuiText>
           <EuiSpacer size="m" />
           <EuiForm component="form">
-            <EuiFormRow id="email" label="Email">
+            <EuiFormRow onChange={handleChange} id="email" label="Email">
               <EuiFieldText name="email" />
             </EuiFormRow>
-            <EuiFormRow id="password" label="Password">
+            <EuiFormRow onChange={handleChange} id="password" label="Password">
               <EuiFieldPassword name="password" />
             </EuiFormRow>
             <EuiSpacer size="m" />
             <EuiButtonIcon
-              type="submit"
+              onClick={() => submitForm()}
+              isLoading={loading}
               display="base"
               iconType="push"
               iconSize="l"
