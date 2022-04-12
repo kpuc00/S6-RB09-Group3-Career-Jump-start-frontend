@@ -1,0 +1,23 @@
+.formContainer {
+  height: auto;
+}
+.header {
+  line-height: 100px !important;
+  padding: 25px;
+  font-family: "Nunito" !important;
+  font-style: normal;
+  font-weight: 400 !important;
+  font-size: 45px !important;
+}
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.footer {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}

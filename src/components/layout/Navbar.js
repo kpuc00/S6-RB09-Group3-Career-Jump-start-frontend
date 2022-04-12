@@ -1,32 +1,42 @@
 import React from "react";
 import {
   EuiHeader,
-  EuiHeaderSectionItem,
-  EuiHeaderLogo,
   EuiText,
-  EuiHeaderLinks,
-  EuiHeaderLink,
+  EuiThemeProvider,
+  useEuiTheme,
 } from "@elastic/eui";
+import styles from "../../styles/navbar.module.css"
+
+// Variable that uses custom color themes
+const Box: FunctionComponent<{ children: ReactNode }> = ({ children }) => {
+  const { euiTheme } = useEuiTheme();
+
+  return (
+    <EuiHeader className={styles.header}
+      css={{
+        background: euiTheme.colors.lightShade,
+      }}
+    >
+      {children}
+    </EuiHeader>
+  );
+};
 
 const Navbar = () => {
+  const overrides = {
+    colors: {
+      LIGHT: { lightShade: "#7A2C81" },
+      DARK: { lightShade: "#7A2C81" },
+    },
+  };
   return (
-    <EuiHeader>
-      <EuiHeaderSectionItem border="right">
-        {/* <EuiHeaderLogo>Elastic</EuiHeaderLogo> */}
-        <EuiText>
-          <h4>Welcome</h4>
+    <EuiThemeProvider modify={overrides}>
+      <Box>
+        <EuiText className={styles.heading}>
+          <h4 className={styles.h4}>Welcome</h4>
         </EuiText>
-      </EuiHeaderSectionItem>
-
-      {/* <EuiHeaderSectionItem>
-        <EuiHeaderLinks aria-label="App navigation links example">
-          <EuiHeaderLink href="/" isActive>
-            Home
-          </EuiHeaderLink>
-          <EuiHeaderLink href="/page">Page 1</EuiHeaderLink>
-        </EuiHeaderLinks>
-      </EuiHeaderSectionItem> */}
-    </EuiHeader>
+      </Box>
+    </EuiThemeProvider>
   );
 };
 export default Navbar;

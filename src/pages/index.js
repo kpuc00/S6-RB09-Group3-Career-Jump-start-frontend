@@ -1,4 +1,5 @@
 import Home from "./Home";
 import Page from "./Page";
 import Login from "./auth/Login";
-export { Home, Page, Login };
+import CandidateRegistration from "./auth/candidate-registration";
+export { Home, Page, Login, CandidateRegistration };
