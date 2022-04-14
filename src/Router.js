@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import TestGet from "./components/candidate-registration/test";
 import { Home, Login, Page, CandidateRegistration } from "./pages";
 
 const Router = () => {
@@ -8,6 +9,7 @@ const Router = () => {
       <Route path="/page" element={<Page />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<CandidateRegistration />}/>
+      <Route path="/test" element={<TestGet />}/>
     </Routes>
   );
 };

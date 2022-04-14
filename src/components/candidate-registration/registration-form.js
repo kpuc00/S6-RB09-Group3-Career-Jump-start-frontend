@@ -1,15 +1,29 @@
 import React, { useState } from "react";
 import GeneralInformation from "./general-information";
-import QuestionFirst from "./questions-first";
-import QuestionSecond from "./questions-second";
-import LastQuestion from "./last-question";
+import Questions from "./questions";
 import RegistrationSucess from "./registration-sucess";
 import styles from "../../styles/registration-form.module.css";
 import { EuiButtonIcon, EuiText } from "@elastic/eui";
-import { any } from "prop-types";
+import { any, number } from "prop-types";
 
 function RegistrationForm() {
   const [step, setStep] = useState(0);
+  const [sfstep, setSfState] = useState(0);
+
+  const url = "http://localhost:8080/softfactor/";
+  const options = {
+    method: "GET",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json;charset=UTF-8",
+    },
+  };
+
+  fetch(url, options)
+    .then((response) => response.json())
+    .then((data) => {
+      setSfState((sfstep) => (sfstep = data.length));
+    });
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,19 +38,14 @@ function RegistrationForm() {
     }
   }
   const StepDisplay = () => {
-    switch (step) {
-      case 0:
-        return (
-          <GeneralInformation formData={formData} setFormData={setFormData} />
-        );
-      case 1:
-        return <QuestionFirst />;
-      case 2:
-        return <QuestionSecond />;
-      case 3:
-        return <LastQuestion />;
-      case 4:
-        return <RegistrationSucess />;
+    if (step === 0) {
+      return (
+        <GeneralInformation formData={formData} setFormData={setFormData} />
+      );
+    } else if (step > 0 && step <= sfstep) {
+      return <Questions number={step} />;
+    } else {
+      return <RegistrationSucess />;
     }
   };
   return (
@@ -66,15 +75,13 @@ function RegistrationForm() {
           iconType="arrowRight"
           iconSize="l"
           size="m"
-          aria-label={step === 5 ? "Submit" : "Next"}
-          disabled={step == 4}
+          aria-label={step === sfstep+2 ? "Submit" : "Next"}
+          disabled={step == sfstep+2}
           onClick={() => {
             if (formData.password != formData.confirmPassword) {
               alert("Password do not match");
-            }
-            else{
+            } else {
               setStep((currentPage) => currentPage + 1);
-              console.log(formData);
             }
           }}
         />
