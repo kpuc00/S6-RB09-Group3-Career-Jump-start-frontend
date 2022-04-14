@@ -29,9 +29,9 @@ const Page = () => {
     <EuiText>
       <h3>Welcome {user ? user.username : "unknown"}</h3>
       <h6>Email:</h6>
-      <p>{user.email}</p>
+      <p>{user && user.email}</p>
       <h6>Roles:</h6>
-      <p>{user.roles}</p>
+      <p>{user && user.roles}</p>
       <EuiButton href="/">Back to home</EuiButton>
       <EuiButton onClick={() => submitUser()}>Test user role</EuiButton>
       <EuiButton onClick={() => submitAdmin()}>Test admin role</EuiButton>
