@@ -1,20 +1,34 @@
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import cookie from "react-cookies";
 import { Home, Login, NotFound, Page } from "./pages";
-import { selectSignedIn } from "./features/auth/authSlice";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { selectUser, setUser } from "./features/auth/authSlice";
 
 const Router = () => {
-  const signedIn = useSelector(selectSignedIn);
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser); //null
+
+  useEffect(() => {
+    const userCookie = cookie.load("user");
+    if (userCookie) {
+      dispatch(setUser(userCookie));
+      console.log(user); // ne e null
+    }
+  }, [dispatch, user]);
+
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route
-        path="/page"
-        element={signedIn ? <Page /> : <Navigate replace to="/login" />}
+        path="/login"
+        element={user ? <Navigate replace to="/" /> : <Login />}
       />
       <Route
-        path="/login"
-        element={signedIn ? <Navigate replace to="/" /> : <Login />}
+        path="/page"
+        element={<Page />}
+
+        //element={!user ? <Navigate replace to="/login" /> : <Page />}
       />
       <Route path="*" element={<NotFound />} />
     </Routes>

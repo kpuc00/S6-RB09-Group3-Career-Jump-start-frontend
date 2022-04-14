@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import cookie from "react-cookies";
 import { login } from "./authAPI";
 
 const initialState = {
   loading: false,
-  signedIn: false,
-  user: undefined,
+  user: null,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -30,8 +30,9 @@ export const authSlice = createSlice({
     authLoading(state) {
       if (!state.loading) state.loading = true;
     },
-    setSignedIn(state) {
-      if (!state.signedIn) state.signedIn = true;
+    setUser(state, action) {
+      if (!state.user) state.user = action.payload;
+      console.log("authslice set user", state.user, action.payload);
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -43,22 +44,29 @@ export const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.status = false;
-        state.user = action.payload;
-        !action.payload.status
-          ? (state.signedIn = true)
-          : (state.status = false);
+        if (action.payload.status) state.status = false;
+        else {
+          state.user = action.payload;
+          cookie.save("user", action.payload, {
+            path: "/",
+            maxAge: 24 * 60 * 60,
+          });
+          state.signedIn = true;
+        }
       });
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { authLoading, setSignedIn } = authSlice.actions;
+export const { authLoading, setUser } = authSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectSignedIn = (state) => state.auth.signedIn;
-export const selectUser = (state) => state.auth.user;
+export const selectUser = (state) => {
+  console.log("selectuser", state.auth.user);
+  return state.auth.user;
+};
 export const selectLoading = (state) => state.auth.loading;
 
 export default authSlice.reducer;

@@ -12,17 +12,12 @@ import {
   EuiFieldPassword,
   EuiSpacer,
 } from "@elastic/eui";
-import {
-  loginUser,
-  selectLoading,
-  selectUser,
-} from "../../features/auth/authSlice";
+import { loginUser, selectLoading } from "../../features/auth/authSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loading = useSelector(selectLoading);
-  const user = useSelector(selectUser);
   const dispatch = useDispatch();
 
   const handleChange = (e) => {

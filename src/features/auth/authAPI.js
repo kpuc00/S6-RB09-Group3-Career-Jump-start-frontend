@@ -11,4 +11,18 @@ function login(email, password) {
   });
 }
 
-export { login };
+function testUser() {
+  return fetch(domain + "api/test/user", {
+    method: "GET",
+    credentials: "include",
+  });
+}
+
+function testAdmin() {
+  return fetch(domain + "api/test/admin", {
+    method: "GET",
+    credentials: "include",
+  });
+}
+
+export { login, testUser, testAdmin };
