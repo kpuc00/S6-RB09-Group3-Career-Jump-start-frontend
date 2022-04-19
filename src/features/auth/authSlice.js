@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import cookie from "react-cookies";
-import { login } from "./authAPI";
+import { login, logout } from "./authAPI";
 
 const initialState = {
   loading: false,
-  user: null,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -16,6 +15,17 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (params, thunkAPI) => {
     const response = await login(params.email, params.password);
+    // The value we return becomes the `fulfilled` action payload
+    const data = await response.json();
+    console.log(data);
+    return data;
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (params, thunkAPI) => {
+    const response = await logout();
     // The value we return becomes the `fulfilled` action payload
     const data = await response.json();
     console.log(data);
@@ -53,6 +63,15 @@ export const authSlice = createSlice({
           });
           state.signedIn = true;
         }
+      });
+    builder
+      .addCase(logoutUser.pending, (state) => {
+        state.status = true;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.user = null;
+        cookie.remove("user");
+        state.signedIn = false;
       });
   },
 });

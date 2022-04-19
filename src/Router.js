@@ -1,21 +1,21 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import cookie from "react-cookies";
-import { Home, Login, NotFound, Page } from "./pages";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, setUser } from "./features/auth/authSlice";
+import { Home, Login, NotFound, Page } from "./pages";
 
 const Router = () => {
+  const user = useSelector(selectUser);
+  console.log("ruter", user);
   const dispatch = useDispatch();
-  const user = useSelector(selectUser); //null
 
   useEffect(() => {
     const userCookie = cookie.load("user");
     if (userCookie) {
       dispatch(setUser(userCookie));
-      console.log(user); // ne e null
     }
-  }, [dispatch, user]);
+  });
 
   return (
     <Routes>
@@ -26,9 +26,7 @@ const Router = () => {
       />
       <Route
         path="/page"
-        element={<Page />}
-
-        //element={!user ? <Navigate replace to="/login" /> : <Page />}
+        element={user ? <Page /> : <Navigate replace to="/login" />}
       />
       <Route path="*" element={<NotFound />} />
     </Routes>

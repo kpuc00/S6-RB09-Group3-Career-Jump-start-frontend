@@ -1,11 +1,14 @@
 import React from "react";
 import { EuiText, EuiButton } from "@elastic/eui";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
     <EuiText>
       <h1>Home page</h1>
-      <EuiButton href="/page">Page 1</EuiButton>
+      <Link to="/page">
+        <EuiButton>Page 1</EuiButton>
+      </Link>
     </EuiText>
   );
 };

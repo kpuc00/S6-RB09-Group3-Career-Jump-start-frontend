@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { EuiText, EuiButton } from "@elastic/eui";
 import { selectUser } from "../features/auth/authSlice";
@@ -32,7 +33,10 @@ const Page = () => {
       <p>{user && user.email}</p>
       <h6>Roles:</h6>
       <p>{user && user.roles}</p>
-      <EuiButton href="/">Back to home</EuiButton>
+      <Link to="/">
+        <EuiButton>Back to home</EuiButton>
+      </Link>
+
       <EuiButton onClick={() => submitUser()}>Test user role</EuiButton>
       <EuiButton onClick={() => submitAdmin()}>Test admin role</EuiButton>
     </EuiText>
