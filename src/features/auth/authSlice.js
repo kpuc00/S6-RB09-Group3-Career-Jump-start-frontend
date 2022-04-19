@@ -4,6 +4,7 @@ import { login, logout } from "./authAPI";
 
 const initialState = {
   loading: false,
+  user: cookie.load("user") || null
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -61,6 +62,7 @@ export const authSlice = createSlice({
             path: "/",
             maxAge: 24 * 60 * 60,
           });
+          localStorage.setItem("showLogoutPage", "true")
           state.signedIn = true;
         }
       });
