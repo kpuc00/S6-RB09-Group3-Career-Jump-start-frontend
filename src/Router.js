@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectUser, setUser } from "./features/auth/authSlice";
 import { Home, Login, NotFound, Page, Admin } from "./pages";
 import Logout from "./pages/auth/Logout";
-import { Candidates, Companies, SoftFactors } from "./components";
+import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
 const Router = () => {
   const user = useSelector(selectUser);
@@ -29,6 +29,7 @@ const Router = () => {
         <Route path="candidates" element={<Candidates />} />
         <Route path="companies" element={<Companies />} />
         <Route path="softfactors" element={<SoftFactors />} />
+        <Route path="questions" element={<Questions />} />
       </Route>
       <Route
         path="/page"
