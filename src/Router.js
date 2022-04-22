@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import cookie from "react-cookies";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, setUser } from "./features/auth/authSlice";
-import { Home, Login, NotFound, Page } from "./pages";
+import { Home, Login, NotFound, Page, Admin } from "./pages";
 import Logout from "./pages/auth/Logout";
 
 const Router = () => {
@@ -24,6 +24,7 @@ const Router = () => {
         path="/login"
         element={user ? <Navigate replace to="/" /> : <Login />}
       />
+      <Route path="/admin" element={<Admin />} />
       <Route
         path="/page"
         element={user ? <Page /> : <Navigate replace to="/login" />}
