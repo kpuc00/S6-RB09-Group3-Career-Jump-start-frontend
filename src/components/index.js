@@ -4,4 +4,13 @@ import Candidates from "./admin/Candidates";
 import Companies from "./admin/Companies";
 import SoftFactors from "./admin/SoftFactors";
 import Questions from "./admin/Questions";
-export { Navbar, AdminTabs, Candidates, Companies, SoftFactors, Questions };
+import Company from "./admin/Company";
+export {
+  Navbar,
+  AdminTabs,
+  Candidates,
+  Companies,
+  SoftFactors,
+  Questions,
+  Company,
+};

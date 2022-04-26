@@ -1,22 +1,15 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import cookie from "react-cookies";
-import { useSelector, useDispatch } from "react-redux";
-import { selectUser, setUser } from "./features/auth/authSlice";
+import { useSelector } from "react-redux";
+import { selectUser } from "./features/auth/authSlice";
 import { Home, Login, NotFound, Page, Admin } from "./pages";
 import Logout from "./pages/auth/Logout";
 import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
 const Router = () => {
   const user = useSelector(selectUser);
-  const dispatch = useDispatch();
 
-  useEffect(() => {
-    const userCookie = cookie.load("user");
-    if (userCookie) {
-      dispatch(setUser(userCookie));
-    }
-  }, [dispatch]);
+  useEffect(() => {}, []);
 
   return (
     <Routes>
@@ -25,7 +18,10 @@ const Router = () => {
         path="/login"
         element={user ? <Navigate replace to="/" /> : <Login />}
       />
-      <Route path="/admin" element={<Admin />}>
+      <Route
+        path="/admin"
+        element={user ? <Admin /> : <Navigate replace to="/login" />}
+      >
         <Route path="candidates" element={<Candidates />} />
         <Route path="companies" element={<Companies />} />
         <Route path="softfactors" element={<SoftFactors />} />
