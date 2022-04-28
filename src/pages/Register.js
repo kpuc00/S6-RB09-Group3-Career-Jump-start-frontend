@@ -5,39 +5,22 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Register = () => {
 
   let navigate = useNavigate();
 
   async function handleClick(event) {
     event.preventDefault();
-    navigate("/login", { replace: true });
+    navigate("/candidate", { replace: true });
   }
 
   async function handleClick2(event) {
     event.preventDefault();
-    navigate("/register", { replace: true });
+    navigate("/company", { replace: true });
   }
 
   return (
     <div className={styles.container2}>
-      <EuiText
-        style={{ gridColumnStart: "1", gridColumnEnd: "3", marginTop: "100px" }}
-      >
-        <h1
-          style={{ textAlign: "center", fontFamily: "Helvetica, sans-serif" }}
-        >
-          We will help you find a{" "}
-          <span style={{ fontWeight: "normal" }}>
-            <i>job</i>
-          </span>{" "}
-          <br /> that matches{" "}
-          <span style={{ fontWeight: "normal" }}>
-            <i>you</i>
-          </span>
-          .
-        </h1>
-      </EuiText>
       <hr
         style={{
           width: "50%",
@@ -52,7 +35,7 @@ const Home = () => {
       <EuiText
         style={{ gridColumnStart: "1", gridColumnEnd: "2", gridRowStart: "2" }}
       >
-        <h1 style={{ fontFamily: "Helvetica, sans-serif" }}>Login</h1>{" "}
+        <h1 style={{ fontFamily: "Helvetica, sans-serif" }}>Candidate</h1>{" "}
         <EuiButton
           type="submit"
           fill
@@ -76,7 +59,7 @@ const Home = () => {
             fontFamily: "Helvetica, sans-serif",
           }}
         >
-          Register
+          Company
         </h1>{" "}
         <EuiButton
           type="submit"
@@ -92,4 +75,4 @@ const Home = () => {
     </div>
   );
 };
-export default Home;
+export default Register;

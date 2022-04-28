@@ -3,8 +3,10 @@ import GeneralInformation from "./general-information";
 import Questions from "./questions";
 import RegistrationSucess from "./registration-sucess";
 import styles from "../../styles/registration-form.module.css";
-import { EuiButtonIcon, EuiText } from "@elastic/eui";
-import { any, number } from "prop-types";
+import { EuiButton, EuiFormLabel, EuiText } from "@elastic/eui";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { any } from "prop-types";
 
 function RegistrationForm() {
   const [step, setStep] = useState(0);
@@ -32,18 +34,13 @@ function RegistrationForm() {
     password: "",
     confirmPassword: "",
   });
-  function matchPassword() {
-    if (formData.password != formData.confirmPassword) {
-      alert("Password do not match");
-    }
-  }
   const StepDisplay = () => {
     if (step === 0) {
       return (
         <GeneralInformation formData={formData} setFormData={setFormData} />
       );
     } else if (step > 0 && step <= sfstep) {
-      return <Questions number={step} />;
+      return <Questions />;
     } else {
       return <RegistrationSucess />;
     }
@@ -57,37 +54,44 @@ function RegistrationForm() {
       </div>
       <div className={styles.body}>{StepDisplay()}</div>
       <div className={styles.footer}>
-        <EuiButtonIcon
-          type="submit"
+        <EuiButton
           display="base"
-          iconType="arrowLeft"
-          iconSize="l"
-          size="m"
           aria-label="Previous"
-          disabled={step == 0}
+          fill
+          color="text"
+          className={step === 0 ? styles.none : styles.button}
+          minWidth={20}
+          disabled={step === 0}
           onClick={() => {
             setStep((currentPage) => currentPage - 1);
           }}
-        />
-        <EuiButtonIcon
+        >
+          <FontAwesomeIcon icon={faArrowLeft} className={styles.icon} />
+        </EuiButton>
+        <EuiButton
           type="submit"
-          display="base"
-          iconType="arrowRight"
-          iconSize="l"
-          size="m"
-          aria-label={step === sfstep+2 ? "Submit" : "Next"}
-          disabled={step == sfstep+2}
+          fill
+          className={styles.button}
+          color="text"
+          minWidth={20}
+          aria-label={step === sfstep + 2 ? "Submit" : "Next"}
+          disabled={step === sfstep + 2}
           onClick={() => {
-            if (formData.password != formData.confirmPassword) {
+            if (formData.password !== formData.confirmPassword) {
               alert("Password do not match");
             } else {
               setStep((currentPage) => currentPage + 1);
             }
           }}
-        />
+        >
+          <FontAwesomeIcon icon={faArrowRight} className={styles.icon} />
+        </EuiButton>
       </div>
+      <EuiFormLabel>
+        Step {step + 1}/{sfstep + 2}
+      </EuiFormLabel>
     </div>
   );
 }
 
-export default RegistrationForm;
+export default {RegistrationForm};

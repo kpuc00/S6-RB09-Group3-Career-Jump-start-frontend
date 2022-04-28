@@ -3,4 +3,5 @@ import Home from "./Home";
 import Page from "./Page";
 import Login from "./auth/Login";
 import CandidateRegistration from "./auth/candidate-registration";
-export { NotFound, Home, Page, Login, CandidateRegistration };
+import Register from "./Register";
+export { NotFound, Home, Page, Login, CandidateRegistration, Register };

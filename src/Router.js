@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import cookie from "react-cookies";
-import { Home, Login, NotFound, Page, CandidateRegistration } from "./pages";
+import { Home, Login, NotFound, Page, CandidateRegistration, Register } from "./pages";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, setUser } from "./features/auth/authSlice";
 
@@ -31,7 +31,8 @@ const Router = () => {
         //element={!user ? <Navigate replace to="/login" /> : <Page />}
       />
       <Route path="*" element={<NotFound />} />
-      <Route path="/register" element={<CandidateRegistration />}/>
+      <Route path="/register" element={<Register />}/>
+      <Route path="/candidate" element={<CandidateRegistration />}/>
     </Routes>
   );
 };

@@ -1,4 +1,9 @@
-import { EuiText, EuiButton, EuiButtonGroup } from "@elastic/eui";
+import {
+  EuiText,
+  EuiKeyPadMenu,
+  EuiFlexGroup,
+  EuiKeyPadMenuItem,
+} from "@elastic/eui";
 import React, { useState, useEffect } from "react";
 import styles from "../../styles/questions-first.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,12 +14,15 @@ import {
   faMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
-function Questions({ number }) {
-  const [sfData, setSfData] = useState({
-    id: null,
-    title: null,
-  });
-
+function Questions() {
+  const [isLoaded, setisLoaded] = useState(false);
+  // const [num, setNum] = useState(0);
+  const [sfData, setSfData] = useState([
+    {
+      id: null,
+      title: null,
+    },
+  ]);
   const [qData, setQData] = useState([
     {
       id: null,
@@ -23,7 +31,7 @@ function Questions({ number }) {
   ]);
 
   useEffect(() => {
-    const url = "http://localhost:8080/softfactor/" + number;
+    const url = "http://localhost:8080/softfactor/";
     const options = {
       method: "GET",
       headers: {
@@ -31,55 +39,106 @@ function Questions({ number }) {
         "Content-Type": "application/json;charset=UTF-8",
       },
     };
-    fetch(url, options)
-      .then((response) => response.json())
-      .then((data) => setSfData(data));
-  },);
-  useEffect(() => {
-    const urlQ = "http://localhost:8080/question/?softFactorId=" + number;
-    const optionsQ = {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-    };
-    fetch(urlQ, optionsQ)
-      .then((response) => response.json())
-      .then((data) => setQData(data));
-  }, []);
+    if (!isLoaded) {
+      fetch(url, options)
+        .then((response) => response.json())
+        .then((data) => {
+          let ids = [];
+          data.map((element) => {
+            ids.push(element);
+          });
+          setSfData(ids);
+          setisLoaded(true);
+        });
+    }
+  });
+
+  // useEffect(() => {
+  //   const urlQ = "http://localhost:8080/question/?softFactorId=" + sfData[0].id;
+  //   const optionsQ = {
+  //     method: "GET",
+  //     headers: {
+  //       Accept: "application/json",
+  //       "Content-Type": "application/json;charset=UTF-8",
+  //     },
+  //   };
+  //   fetch(urlQ, optionsQ)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setQData(data);
+  //       console.log(data);
+  //     });
+  // }, []);
 
   const questions = qData.map((question) => (
-    <div>
+    <div key={question.id}>
       <p>
         {question.id}. {question.content}
       </p>
-      <EuiButtonGroup
-        legend="Legend is required"
-        buttonSize="m"
-        isFullWidth
-        options={[
-          { id: "id0", label: <FontAwesomeIcon icon={faCheckDouble} /> },
-          { id: "id1", label: <FontAwesomeIcon icon={faCheck} /> },
-          { id: "id2", label: <FontAwesomeIcon icon={faMinus} /> },
-          { id: "id3", label: <FontAwesomeIcon icon={faXmark} /> },
-          {
-            id: "id4",
-            label: (
-              <>
-                <FontAwesomeIcon icon={faXmark} />
-                <FontAwesomeIcon icon={faXmark} />
-              </>
-            ),
-          },
-        ]}
-      />
+      <EuiFlexGroup>
+        <EuiKeyPadMenu
+          checkable={{ ariaLegend: "Single select as radios" }}
+          style={{ display: "contents" }}
+        >
+          {/* <EuiFlexItem> */}
+          <EuiKeyPadMenuItem
+            checkable="single"
+            name="test1"
+            id="1"
+            label="Strongly Agree"
+          >
+            <FontAwesomeIcon icon={faCheckDouble} />
+          </EuiKeyPadMenuItem>
+          {/* </EuiFlexItem>
+          <EuiFlexItem> */}
+          <EuiKeyPadMenuItem
+            checkable="single"
+            name="test"
+            id="2"
+            label="Agree"
+          >
+            <FontAwesomeIcon icon={faCheck} />
+          </EuiKeyPadMenuItem>
+          {/* </EuiFlexItem>
+          <EuiFlexItem> */}
+          <EuiKeyPadMenuItem
+            checkable="single"
+            name="test1"
+            id="1"
+            label="No prefference"
+          >
+            <FontAwesomeIcon icon={faMinus} />
+          </EuiKeyPadMenuItem>
+          {/* </EuiFlexItem>
+          <EuiFlexItem> */}
+          <EuiKeyPadMenuItem
+            checkable="single"
+            name="test1"
+            id="1"
+            label="Disagree"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+          </EuiKeyPadMenuItem>
+          {/* </EuiFlexItem>
+          <EuiFlexItem> */}
+          <EuiKeyPadMenuItem
+            checkable="single"
+            name="test1"
+            id="1"
+            label="Strongly Disagree"
+          >
+            <FontAwesomeIcon icon={faXmark} />
+            <FontAwesomeIcon icon={faXmark} />
+          </EuiKeyPadMenuItem>
+          {/* </EuiFlexItem> */}
+        </EuiKeyPadMenu>
+      </EuiFlexGroup>
     </div>
   ));
   return (
     <div>
       <EuiText>
-        <h3>{sfData.title}</h3>
+        <h3>{sfData[0].title}</h3>
         <div className={styles.questions}>{questions}</div>
       </EuiText>
     </div>

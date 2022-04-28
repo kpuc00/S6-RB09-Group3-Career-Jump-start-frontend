@@ -25,4 +25,14 @@ function testAdmin() {
   });
 }
 
-export { login, testUser, testAdmin };
+function register(email, username, password, role){
+  return fetch(domain + "api/auth/signup", {
+    method: "POST",
+    body: JSON.stringify({ email, username, password, role }),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+export { login, testUser, testAdmin, register };

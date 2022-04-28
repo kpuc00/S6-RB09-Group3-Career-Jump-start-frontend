@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import cookie from "react-cookies";
-import { login } from "./authAPI";
+import { login, register } from "./authAPI";
 
 const initialState = {
   loading: false,
@@ -17,6 +17,21 @@ export const loginUser = createAsyncThunk(
   async (params, thunkAPI) => {
     const response = await login(params.email, params.password);
     // The value we return becomes the `fulfilled` action payload
+    const data = await response.json();
+    console.log(data);
+    return data;
+  }
+);
+
+export const regUser = createAsyncThunk(
+  "auth/regUser",
+  async (params, thunkAPI) => {
+    const response = await register(
+      params.email,
+      params.username,
+      params.password,
+      params.role
+    );
     const data = await response.json();
     console.log(data);
     return data;
@@ -52,6 +67,22 @@ export const authSlice = createSlice({
             maxAge: 24 * 60 * 60,
           });
           state.signedIn = true;
+        }
+      });
+    builder
+      .addCase(regUser.pending, (state) => {
+        state.status = true;
+      })
+      .addCase(regUser.fulfilled, (state, action) => {
+        state.status = false;
+        if(action.payload.status) state.status = false;
+        else{
+          state.user = action.payload;
+          cookie.save("user", action.payload, {
+            path: "/",
+            maxAge: 24 * 60 * 60,
+          });
+          state.register = true;
         }
       });
   },
