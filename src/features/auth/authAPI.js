@@ -11,6 +11,17 @@ function login(email, password) {
   });
 }
 
+function logout() {
+  console.log("pesho");
+  return fetch(domain + "api/auth/signout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+
 function testUser() {
   return fetch(domain + "api/test/user", {
     method: "GET",
@@ -25,7 +36,7 @@ function testAdmin() {
   });
 }
 
-function register(email, username, password, role){
+function register(email, username, password, role) {
   return fetch(domain + "api/auth/signup", {
     method: "POST",
     body: JSON.stringify({ email, username, password, role }),
@@ -35,4 +46,4 @@ function register(email, username, password, role){
     credentials: "include",
   });
 }
-export { login, testUser, testAdmin, register };
+export { register, login, logout, testUser, testAdmin };

@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import cookie from "react-cookies";
-import { login, register } from "./authAPI";
+import { login, register, logout } from "./authAPI";
 
 const initialState = {
   loading: false,
-  user: null,
+  user: cookie.load("user") || null,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -32,6 +32,14 @@ export const regUser = createAsyncThunk(
       params.password,
       params.role
     );
+  }
+);
+
+export const logoutUser = createAsyncThunk(
+  "auth/logoutUser",
+  async (params, thunkAPI) => {
+    const response = await logout();
+    // The value we return becomes the `fulfilled` action payload
     const data = await response.json();
     console.log(data);
     return data;
@@ -66,6 +74,7 @@ export const authSlice = createSlice({
             path: "/",
             maxAge: 24 * 60 * 60,
           });
+          localStorage.setItem("showLogoutPage", "true");
           state.signedIn = true;
         }
       });
@@ -75,8 +84,8 @@ export const authSlice = createSlice({
       })
       .addCase(regUser.fulfilled, (state, action) => {
         state.status = false;
-        if(action.payload.status) state.status = false;
-        else{
+        if (action.payload.status) state.status = false;
+        else {
           state.user = action.payload;
           cookie.save("user", action.payload, {
             path: "/",
@@ -84,6 +93,15 @@ export const authSlice = createSlice({
           });
           state.register = true;
         }
+      });
+    builder
+      .addCase(logoutUser.pending, (state) => {
+        state.status = true;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.user = null;
+        cookie.remove("user");
+        state.signedIn = false;
       });
   },
 });

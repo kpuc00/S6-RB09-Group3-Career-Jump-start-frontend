@@ -1,21 +1,28 @@
 import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import cookie from "react-cookies";
-import { Home, Login, NotFound, Page, CandidateRegistration, Register } from "./pages";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, setUser } from "./features/auth/authSlice";
+import {
+  Home,
+  Login,
+  NotFound,
+  Page,
+  CandidateRegistration,
+  Register,
+} from "./pages";
+import Logout from "./pages/auth/Logout";
 
 const Router = () => {
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
-  const user = useSelector(selectUser); //null
 
   useEffect(() => {
     const userCookie = cookie.load("user");
     if (userCookie) {
       dispatch(setUser(userCookie));
-      console.log(user); // ne e null
     }
-  }, [dispatch, user]);
+  }, [dispatch]);
 
   return (
     <Routes>
@@ -26,13 +33,12 @@ const Router = () => {
       />
       <Route
         path="/page"
-        element={<Page />}
-
-        //element={!user ? <Navigate replace to="/login" /> : <Page />}
+        element={user ? <Page /> : <Navigate replace to="/login" />}
       />
+      <Route path="/logout" element={<Logout />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="/register" element={<Register />}/>
-      <Route path="/candidate" element={<CandidateRegistration />}/>
+      <Route path="/register" element={<Register />} />
+      <Route path="/candidate" element={<CandidateRegistration />} />
     </Routes>
   );
 };
