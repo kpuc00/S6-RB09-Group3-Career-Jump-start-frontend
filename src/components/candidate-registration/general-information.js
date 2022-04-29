@@ -22,9 +22,7 @@ function GeneralInformation() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [role, setRole] = useState([
-    "candidate"
-]);
+  const role = ["candidate"];
   const loading = useSelector(selectLoading);
   const dispatch = useDispatch();
 
@@ -44,7 +42,7 @@ function GeneralInformation() {
     }
   };
   function submitForm() {
-    dispatch(regUser({ email,username,password,role }));
+    dispatch(regUser({ email, username, password, role }));
   }
   return (
     <form className={styles.container}>

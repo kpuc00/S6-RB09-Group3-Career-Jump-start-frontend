@@ -26,12 +26,7 @@ export const loginUser = createAsyncThunk(
 export const regUser = createAsyncThunk(
   "auth/regUser",
   async (params, thunkAPI) => {
-    const response = await register(
-      params.email,
-      params.username,
-      params.password,
-      params.role
-    );
+    await register(params.email, params.username, params.password, params.role);
   }
 );
 
@@ -63,11 +58,11 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
-        state.status = true;
+        state.loading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = false;
-        if (action.payload.status) state.status = false;
+        state.loading = false;
+        if (action.payload.status) state.loading = false;
         else {
           state.user = action.payload;
           cookie.save("user", action.payload, {
@@ -80,11 +75,11 @@ export const authSlice = createSlice({
       });
     builder
       .addCase(regUser.pending, (state) => {
-        state.status = true;
+        state.loading = true;
       })
       .addCase(regUser.fulfilled, (state, action) => {
-        state.status = false;
-        if (action.payload.status) state.status = false;
+        state.loading = false;
+        if (action.payload.status) state.loading = false;
         else {
           state.user = action.payload;
           cookie.save("user", action.payload, {
@@ -96,7 +91,7 @@ export const authSlice = createSlice({
       });
     builder
       .addCase(logoutUser.pending, (state) => {
-        state.status = true;
+        state.loading = true;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
         state.user = null;
