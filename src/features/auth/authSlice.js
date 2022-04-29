@@ -26,7 +26,13 @@ export const loginUser = createAsyncThunk(
 export const regUser = createAsyncThunk(
   "auth/regUser",
   async (params, thunkAPI) => {
-    await register(params.email, params.username, params.password, params.role);
+    const response = await register(
+      params.email,
+      params.username,
+      params.password,
+      params.role
+    );
+    return await response.json();
   }
 );
 
@@ -88,6 +94,11 @@ export const authSlice = createSlice({
           });
           state.register = true;
         }
+      })
+      .addCase(regUser.rejected, (state, action) => {
+        console.log("rejected");
+        console.log(action.payload);
+        state.loading = false;
       });
     builder
       .addCase(logoutUser.pending, (state) => {

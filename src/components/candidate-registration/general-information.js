@@ -96,7 +96,7 @@ function GeneralInformation() {
         isLoading={loading}
         style={{ background: "#7A2C81" }}
       >
-        Sign In
+        Sign Up
       </EuiButton>
     </form>
   );
