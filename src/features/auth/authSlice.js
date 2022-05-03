@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import cookie from "react-cookies";
-import { login, logout } from "./authAPI";
+import { login, register, logout } from "./authAPI";
 
 const initialState = {
   loading: false,
-  user: cookie.load("user") || null
+  user: cookie.load("user") || null,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -20,6 +20,19 @@ export const loginUser = createAsyncThunk(
     const data = await response.json();
     console.log(data);
     return data;
+  }
+);
+
+export const regUser = createAsyncThunk(
+  "auth/regUser",
+  async (params, thunkAPI) => {
+    const response = await register(
+      params.email,
+      params.username,
+      params.password,
+      params.role
+    );
+    return await response.json();
   }
 );
 
@@ -51,24 +64,45 @@ export const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
-        state.status = true;
+        state.loading = true;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        state.status = false;
-        if (action.payload.status) state.status = false;
+        state.loading = false;
+        if (action.payload.status) state.loading = false;
         else {
           state.user = action.payload;
           cookie.save("user", action.payload, {
             path: "/",
             maxAge: 24 * 60 * 60,
           });
-          localStorage.setItem("showLogoutPage", "true")
+          localStorage.setItem("showLogoutPage", "true");
           state.signedIn = true;
         }
       });
     builder
+      .addCase(regUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(regUser.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) state.loading = false;
+        else {
+          state.user = action.payload;
+          cookie.save("user", action.payload, {
+            path: "/",
+            maxAge: 24 * 60 * 60,
+          });
+          state.register = true;
+        }
+      })
+      .addCase(regUser.rejected, (state, action) => {
+        console.log("rejected");
+        console.log(action.payload);
+        state.loading = false;
+      });
+    builder
       .addCase(logoutUser.pending, (state) => {
-        state.status = true;
+        state.loading = true;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
         state.user = null;

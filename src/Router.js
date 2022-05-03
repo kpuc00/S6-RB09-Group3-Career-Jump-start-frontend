@@ -3,7 +3,14 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import cookie from "react-cookies";
 import { useSelector, useDispatch } from "react-redux";
 import { selectUser, setUser } from "./features/auth/authSlice";
-import { Home, Login, NotFound, Page } from "./pages";
+import {
+  Home,
+  Login,
+  NotFound,
+  Page,
+  CandidateRegistration,
+  Register,
+} from "./pages";
 import Logout from "./pages/auth/Logout";
 
 const Router = () => {
@@ -30,6 +37,8 @@ const Router = () => {
       />
       <Route path="/logout" element={<Logout />} />
       <Route path="*" element={<NotFound />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/candidate" element={<CandidateRegistration />} />
     </Routes>
   );
 };
