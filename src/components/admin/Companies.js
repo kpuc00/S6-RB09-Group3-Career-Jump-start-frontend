@@ -1,39 +1,37 @@
-import React from "react";
-import { EuiSearchBar, EuiSpacer } from "@elastic/eui";
+import React, { useEffect } from "react";
+import { EuiSearchBar, EuiSpacer, EuiLoadingSpinner } from "@elastic/eui";
 import Company from "./Company";
-
-const fakeDb = [
-  {
-    id: "1",
-    name: "ASML",
-    location: "Sofia, Bulgaria",
-    logo: "https://source.unsplash.com/1000x1000/?Animals",
-    created: Date.now(),
-  },
-  {
-    id: "2",
-    name: "SAP",
-    location: "Eindhoven, The Netherlands",
-    logo: "https://source.unsplash.com/1000x1000/?Landscapes",
-    created: Date.now(),
-  },
-  {
-    id: "3",
-    name: "Philips",
-    location: "Varna, Bulgaria",
-    logo: "https://source.unsplash.com/1000x1000/?Urban",
-    created: Date.now(),
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getCompanies,
+  selectCompanies,
+  selectCompanyLoading,
+} from "../../features/company/companySlice";
 
 const Companies = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("fetch companies");
+    dispatch(getCompanies());
+    console.log("fetch companies end");
+  }, [dispatch]);
+
+  const companyLoading = useSelector(selectCompanyLoading);
+  const companies = useSelector(selectCompanies);
+
   return (
     <>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
-      {fakeDb.map((company) => {
-        return <Company data={company} key={company.id} />;
-      })}
+      {companyLoading ? (
+        <EuiLoadingSpinner size="xl" />
+      ) : (
+        companies &&
+        companies.map((company) => {
+          return <Company data={company} key={company.id} />;
+        })
+      )}
     </>
   );
 };

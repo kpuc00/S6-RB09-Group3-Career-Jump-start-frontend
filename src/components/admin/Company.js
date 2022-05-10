@@ -25,11 +25,15 @@ const Company = (props) => {
       <EuiPanel color="subdued">
         <EuiFlexGroup alignItems="center" justifyContent="spaceBetween">
           <EuiFlexItem grow={false}>
-            <EuiImage size={100} alt={data.name + " logo"} src={data.logo} />
+            <EuiImage
+              size={100}
+              alt={data.username + " logo"}
+              src={data.logo}
+            />
           </EuiFlexItem>
           <EuiFlexItem>
             <EuiDescriptionList>
-              <EuiDescriptionListTitle>{data.name}</EuiDescriptionListTitle>
+              <EuiDescriptionListTitle>{data.username}</EuiDescriptionListTitle>
               <EuiDescriptionListDescription>
                 Location: {data.location}
               </EuiDescriptionListDescription>
