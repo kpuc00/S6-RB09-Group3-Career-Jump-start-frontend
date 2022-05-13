@@ -1,33 +1,40 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   EuiBasicTable,
   EuiButtonIcon,
   EuiHealth,
   EuiSearchBar,
   EuiSpacer,
+  EuiLoadingSpinner,
 } from "@elastic/eui";
-
-const fakeDb = [
-  {
-    id: "1",
-    name: "John Doe",
-    status: "assigned",
-  },
-  {
-    id: "2",
-    name: "Jane doe",
-    status: "waiting",
-  },
-  {
-    id: "3",
-    name: "tom Doe",
-    status: "assigned",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteUser,
+  getCandidates,
+  selectCandidates,
+  selectSelectedUser,
+  selectUser,
+  selectUserLoading,
+  updateUser,
+} from "../../features/user/userSlice";
+import EditModal from "./EditModal";
+import DeleteModal from "./DeleteModal";
 
 const Candidates = () => {
-  const [sortField, setSortField] = useState("name");
+  const dispatch = useDispatch();
+  const [sortField, setSortField] = useState("username");
   const [sortDirection, setSortDirection] = useState("asc");
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const selectedUser = useSelector(selectSelectedUser);
+  const [updatedUser, setUpdatedUser] = useState(null);
+
+  useEffect(() => {
+    dispatch(getCandidates());
+  }, [dispatch]);
+
+  const userLoading = useSelector(selectUserLoading);
+  const candidates = useSelector(selectCandidates);
 
   const onTableChange = ({ sort = {} }) => {
     const { field: sortField, direction: sortDirection } = sort;
@@ -42,20 +49,13 @@ const Candidates = () => {
     },
   };
 
-  const editUser = (item) => {
-    console.log("edit", item);
-  };
-  const deleteUser = (item) => {
-    console.log("delete", item);
-  };
-
   const actions = [
     {
       render: (item) => {
         return (
           <EuiButtonIcon
             color="warning"
-            onClick={() => editUser(item)}
+            onClick={() => showEditModal(item)}
             iconType="pencil"
             aria-label="Modify candidate"
           />
@@ -67,7 +67,7 @@ const Candidates = () => {
         return (
           <EuiButtonIcon
             color="danger"
-            onClick={() => deleteUser(item)}
+            onClick={() => showDeleteModal(item)}
             iconType="trash"
             aria-label="Remove candidate"
           />
@@ -78,8 +78,13 @@ const Candidates = () => {
 
   const columns = [
     {
-      field: "name",
-      name: "Name",
+      field: "firstName",
+      name: "First name",
+      sortable: true,
+    },
+    {
+      field: "lastName",
+      name: "Last name",
       sortable: true,
     },
     {
@@ -94,7 +99,7 @@ const Candidates = () => {
             : status === "waiting"
             ? "warning"
             : "danger";
-        const label = status;
+        const label = status || "unknown";
         return <EuiHealth color={color}>{label}</EuiHealth>;
       },
     },
@@ -104,20 +109,74 @@ const Candidates = () => {
     },
   ];
 
-  const items = fakeDb.filter((user, index) => index < 10);
+  const items = candidates.filter((candidate, index) => index < 10);
+
+  const showEditModal = (item) => {
+    dispatch(selectUser(item));
+    setUpdatedUser(item);
+    setEditModalVisible(true);
+  };
+  const closeEditModal = () => setEditModalVisible(false);
+
+  const showDeleteModal = (item) => {
+    dispatch(selectUser(item));
+    setDeleteModalVisible(true);
+  };
+  const closeDeleteModal = () => setDeleteModalVisible(false);
+
+  const editCandidate = () => {
+    console.log("edit", updatedUser);
+    dispatch(updateUser(selectedUser.id, updatedUser));
+    setUpdatedUser(null);
+    closeEditModal();
+  };
+
+  const handleUpdate = (e) => {
+    console.log(updatedUser);
+    const field = e.target.name;
+    const newValue = e.target.value;
+    console.log(field);
+    console.log(newValue);
+    setUpdatedUser({
+      ...updatedUser,
+      [field]: newValue,
+    });
+    console.log(updatedUser);
+  };
+
+  const deleteCandidate = () => {
+    dispatch(deleteUser(selectedUser.id));
+    closeDeleteModal();
+  };
 
   return (
     <>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
-      <EuiBasicTable
-        tableCaption="Demo of EuiBasicTable"
-        items={items}
-        rowHeader="name"
-        columns={columns}
-        sorting={sorting}
-        onChange={onTableChange}
-      />
+      {userLoading ? (
+        <EuiLoadingSpinner size="xl" />
+      ) : (
+        candidates && (
+          <EuiBasicTable
+            tableCaption="Candidates"
+            items={items}
+            rowHeader="name"
+            columns={columns}
+            sorting={sorting}
+            onChange={onTableChange}
+          />
+        )
+      )}
+      {editModalVisible && (
+        <EditModal
+          onClose={closeEditModal}
+          onConfirm={editCandidate}
+          handleUpdate={handleUpdate}
+        />
+      )}
+      {deleteModalVisible && (
+        <DeleteModal onCancel={closeDeleteModal} onConfirm={deleteCandidate} />
+      )}
     </>
   );
 };

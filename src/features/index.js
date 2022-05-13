@@ -1,4 +1,4 @@
 import authSlice from "./auth/authSlice";
-import companySlice from "./company/companySlice";
+import userSlice from "./user/userSlice";
 
-export { authSlice, companySlice };
+export { authSlice, userSlice };

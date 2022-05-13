@@ -1,38 +1,47 @@
 import React, { useEffect } from "react";
-import { EuiSearchBar, EuiSpacer, EuiLoadingSpinner } from "@elastic/eui";
+import {
+  EuiPanel,
+  EuiSearchBar,
+  EuiSpacer,
+  EuiLoadingSpinner,
+  EuiText,
+} from "@elastic/eui";
 import Company from "./Company";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getCompanies,
   selectCompanies,
-  selectCompanyLoading,
-} from "../../features/company/companySlice";
+  selectUserLoading,
+} from "../../features/user/userSlice";
 
 const Companies = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("fetch companies");
     dispatch(getCompanies());
-    console.log("fetch companies end");
   }, [dispatch]);
 
-  const companyLoading = useSelector(selectCompanyLoading);
+  const userLoading = useSelector(selectUserLoading);
   const companies = useSelector(selectCompanies);
 
+  console.log(companies);
+
   return (
-    <>
+    <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
-      {companyLoading ? (
+      {userLoading ? (
         <EuiLoadingSpinner size="xl" />
-      ) : (
-        companies &&
+      ) : companies && companies.length > 0 ? (
         companies.map((company) => {
           return <Company data={company} key={company.id} />;
         })
+      ) : (
+        <EuiText textAlign="center">
+          <p>No items found</p>
+        </EuiText>
       )}
-    </>
+    </EuiPanel>
   );
 };
 export default Companies;

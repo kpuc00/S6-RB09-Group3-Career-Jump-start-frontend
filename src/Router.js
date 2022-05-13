@@ -1,22 +1,42 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectUser } from "./features/auth/authSlice";
+import {
+  selectIsAdmin,
+  selectIsCandidate,
+  selectIsCompany,
+  selectIsMatcher,
+  selectUser,
+} from "./features/auth/authSlice";
 import { Home, Login, NotFound, Page, Admin } from "./pages";
 import Logout from "./pages/auth/Logout";
 import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
 const Router = () => {
   const user = useSelector(selectUser);
-
-  useEffect(() => {}, []);
+  const isCompany = useSelector(selectIsCompany);
+  const isCandidate = useSelector(selectIsCandidate);
+  const isMatcher = useSelector(selectIsMatcher);
+  const isAdmin = useSelector(selectIsAdmin);
 
   return (
     <Routes>
       <Route path="/" element={<Home />} />
       <Route
         path="/login"
-        element={user ? <Navigate replace to="/" /> : <Login />}
+        element={
+          user && isCompany ? (
+            <Navigate replace to="/" />
+          ) : user && isCandidate ? (
+            <Navigate replace to="/" />
+          ) : user && isMatcher ? (
+            <Navigate replace to="/" />
+          ) : user && isAdmin ? (
+            <Navigate replace to="/admin" />
+          ) : (
+            <Login />
+          )
+        }
       />
       <Route
         path="/admin"
