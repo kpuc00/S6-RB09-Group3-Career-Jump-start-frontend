@@ -5,6 +5,7 @@ import {
   EuiSpacer,
   EuiLoadingSpinner,
   EuiText,
+  EuiProgress,
 } from "@elastic/eui";
 import Company from "./Company";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,6 +13,7 @@ import {
   getCompanies,
   selectCompanies,
   selectUserLoading,
+  selectUserProcessing,
 } from "../../features/user/userSlice";
 import { setAdminSelectedTabId } from "../../features/layout/layoutSlice";
 
@@ -23,6 +25,7 @@ const Companies = () => {
     dispatch(getCompanies());
   }, [dispatch]);
 
+  const userProcessing = useSelector(selectUserProcessing);
   const userLoading = useSelector(selectUserLoading);
   const companies = useSelector(selectCompanies);
 
@@ -32,6 +35,7 @@ const Companies = () => {
     <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
+      {userProcessing && <EuiProgress size="xs" color="primary" />}
       {userLoading ? (
         <EuiLoadingSpinner size="xl" />
       ) : companies && companies.length > 0 ? (

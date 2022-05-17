@@ -16,6 +16,7 @@ import {
   selectSelectedUser,
   selectUser,
   selectUserLoading,
+  selectUserProcessing,
   updateUser,
 } from "../../features/user/userSlice";
 import EditModal from "./EditModal";
@@ -30,6 +31,8 @@ const Candidates = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const selectedUser = useSelector(selectSelectedUser);
   const [updatedUser, setUpdatedUser] = useState(null);
+
+  const userProcessing = useSelector(selectUserProcessing);
 
   useEffect(() => {
     dispatch(setAdminSelectedTabId("candidates"));
@@ -128,23 +131,18 @@ const Candidates = () => {
   const closeDeleteModal = () => setDeleteModalVisible(false);
 
   const editCandidate = () => {
-    console.log("edit", updatedUser);
     dispatch(updateUser({ id: selectedUser.id, updatedUser }));
     setUpdatedUser(null);
     closeEditModal();
   };
 
   const handleUpdate = (e) => {
-    console.log(updatedUser);
     const field = e.target.name;
     const newValue = e.target.value;
-    console.log(field);
-    console.log(newValue);
     setUpdatedUser({
       ...updatedUser,
       [field]: newValue,
     });
-    console.log(updatedUser);
   };
 
   const deleteCandidate = () => {
@@ -167,6 +165,7 @@ const Candidates = () => {
             columns={columns}
             sorting={sorting}
             onChange={onTableChange}
+            loading={userProcessing}
           />
         )
       )}

@@ -43,23 +43,16 @@ const Company = (props) => {
   const closeDeleteModal = () => setDeleteModalVisible(false);
 
   const editCompany = () => {
-    console.log("edit", updatedUser);
     dispatch(updateUser({ id: selectedUser.id, updatedUser }));
     setUpdatedUser(null);
     closeEditModal();
   };
 
   const handleUpdate = (e) => {
-    console.log(updatedUser);
-    const field = e.target.name;
-    const newValue = e.target.value;
-    console.log(field);
-    console.log(newValue);
     setUpdatedUser({
       ...updatedUser,
-      [field]: newValue,
+      [e.target.name]: e.target.value,
     });
-    console.log(updatedUser);
   };
 
   const deleteCompany = () => {

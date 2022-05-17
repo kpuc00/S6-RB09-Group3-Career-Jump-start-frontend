@@ -3,6 +3,7 @@ import { delUser, fetchCandidates, fetchCompanies, updUser } from "./userAPI";
 
 const initialState = {
   loading: false,
+  processing: false,
   selectedUser: null,
   message: null,
   error: null,
@@ -21,7 +22,6 @@ export const getCandidates = createAsyncThunk(
     const response = await fetchCandidates();
     // The value we return becomes the `fulfilled` action payload
     const json = await response.json();
-    console.log("candidates", json);
     return json;
   }
 );
@@ -30,30 +30,24 @@ export const getCompanies = createAsyncThunk("user/getCompanies", async () => {
   const response = await fetchCompanies();
   // The value we return becomes the `fulfilled` action payload
   const json = await response.json();
-  console.log("companies", json);
   return json;
 });
 
 export const updateUser = createAsyncThunk(
   "user/updateUser",
   async (params) => {
-    console.log("upd id", params.id);
-    console.log("upd user", params.updatedUser);
     const response = await updUser(params.id, params.updatedUser);
+    const text = await response.text();
     // // The value we return becomes the `fulfilled` action payload
-    // const json = await response.json();
-    console.log("response.json", await response.json());
-    return await response.json();
+    if (response.ok) return { text, updatedUser: params.updatedUser };
   }
 );
 
 export const deleteUser = createAsyncThunk("user/deleteUser", async (id) => {
-  console.log("del id", id);
   const response = await delUser(id);
+  const text = await response.text();
   // // The value we return becomes the `fulfilled` action payload
-  // const json = await response.json();
-  console.log("response.json", await response.json());
-  return await response.json();
+  if (response.ok) return text;
 });
 
 export const userSlice = createSlice({
@@ -64,7 +58,6 @@ export const userSlice = createSlice({
       if (!state.loading) state.loading = true;
     },
     selectUser(state, action) {
-      console.log(action.payload);
       state.selectedUser = action.payload;
     },
   },
@@ -76,10 +69,8 @@ export const userSlice = createSlice({
         state.loading = true;
       })
       .addCase(getCandidates.fulfilled, (state, action) => {
-        console.log(action.payload);
         if (action.payload.status) state.loading = false;
         else {
-          console.log(action.payload);
           state.candidates = action.payload;
           state.loading = false;
         }
@@ -89,45 +80,67 @@ export const userSlice = createSlice({
         state.loading = true;
       })
       .addCase(getCompanies.fulfilled, (state, action) => {
-        console.log(action.payload);
         if (action.payload.status) state.loading = false;
         else {
-          console.log(action.payload);
           state.companies = action.payload;
           state.loading = false;
         }
       });
     builder
-      .addCase(updateUser.pending, (state) => {})
+      .addCase(updateUser.pending, (state) => {
+        state.processing = true;
+      })
       .addCase(updateUser.fulfilled, (state, action) => {
-        console.log(action.payload);
+        state.candidates = [
+          ...state.candidates.map((item) => {
+            if (item.id !== action.payload.updatedUser.id) {
+              // This isn't the item we care about - keep it as-is
+              return item;
+            }
+            // Otherwise, this is the one we want - return an updated value
+            return {
+              ...item,
+              ...action.payload.updatedUser,
+            };
+          }),
+        ];
+        state.companies = [
+          ...state.companies.map((item) => {
+            if (item.id !== action.payload.updatedUser.id) {
+              // This isn't the item we care about - keep it as-is
+              return item;
+            }
+            // Otherwise, this is the one we want - return an updated value
+            return {
+              ...item,
+              ...action.payload.updatedUser,
+            };
+          }),
+        ];
+        state.processing = false;
+        state.selectedUser = null;
+      });
+    builder
+      .addCase(deleteUser.pending, (state) => {
+        state.processing = true;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
         if (action.payload.status) state.loading = false;
         else {
-          console.log("update fulfilled", action.payload);
+          state.candidates = [
+            ...state.candidates.filter((item) => {
+              return item.id !== state.selectedUser.id;
+            }),
+          ];
+          state.companies = [
+            ...state.companies.filter((item) => {
+              return item.id !== state.selectedUser.id;
+            }),
+          ];
+          state.processing = false;
           state.selectedUser = null;
         }
       });
-    builder.addCase(deleteUser.fulfilled, (state, action) => {
-      console.log(action.payload);
-      if (action.payload.status) state.loading = false;
-      else {
-        console.log("delete fulfilled", action.payload);
-        // state.candidates = [
-        //   ...state.candidates.filter((item) => {
-        //     return item.id !== state.selectedUser.id;
-        //   }),
-        // ];
-        // state.companies = [
-        //   ...state.companies.filter((item) => {
-        //     return item.id !== state.selectedUser.id;
-        //   }),
-        // ];
-        state.selectedUser = null;
-      }
-    });
-    // .addCase(deleteUser.rejected, (state, action) => {
-    //   console.log(action.payload);
-    // });
   },
 });
 
@@ -138,6 +151,7 @@ export const { userLoading, selectUser } = userSlice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectUserLoading = (state) => state.user.loading;
+export const selectUserProcessing = (state) => state.user.processing;
 export const selectCandidates = (state) => state.user.candidates;
 export const selectCompanies = (state) => state.user.companies;
 export const selectMessage = (state) => state.user.message;
