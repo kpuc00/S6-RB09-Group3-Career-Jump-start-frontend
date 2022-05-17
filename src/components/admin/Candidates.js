@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  EuiPanel,
   EuiBasicTable,
   EuiButtonIcon,
   EuiHealth,
@@ -150,7 +151,7 @@ const Candidates = () => {
   };
 
   return (
-    <>
+    <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
       {userLoading ? (
@@ -177,7 +178,7 @@ const Candidates = () => {
       {deleteModalVisible && (
         <DeleteModal onCancel={closeDeleteModal} onConfirm={deleteCandidate} />
       )}
-    </>
+    </EuiPanel>
   );
 };
 export default Candidates;
