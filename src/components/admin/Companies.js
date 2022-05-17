@@ -29,8 +29,6 @@ const Companies = () => {
   const userLoading = useSelector(selectUserLoading);
   const companies = useSelector(selectCompanies);
 
-  console.log(companies);
-
   return (
     <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
