@@ -1,0 +1,12 @@
+.heading {
+  font-family: "Nunito", sans-serif;
+  color: white;
+  text-align: center;
+}
+.header {
+  height: 80px;
+}
+.h4 {
+  font-weight: 400 !important;
+  font-size: 32px !important;
+}

@@ -1,0 +1,37 @@
+.formContainer {
+  height: auto;
+}
+.header {
+  line-height: 100px !important;
+  padding: 25px;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-style: normal;
+  font-weight: 400 !important;
+  font-size: 45px !important;
+}
+.body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.footer {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+}
+.button{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: black !important;
+}
+.none{
+  display: none;
+}
+.icon{
+  width: 22px !important;
+  height: 2em !important;
+  vertical-align: -0.8em;
+}
