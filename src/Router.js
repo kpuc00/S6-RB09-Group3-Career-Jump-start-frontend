@@ -8,7 +8,15 @@ import {
   selectIsMatcher,
   selectUser,
 } from "./features/auth/authSlice";
-import { Home, Login, NotFound, Page, Admin } from "./pages";
+import {
+  Home,
+  Login,
+  NotFound,
+  Page,
+  CandidateRegistration,
+  Register,
+  Admin,
+} from "./pages";
 import Logout from "./pages/auth/Logout";
 import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
@@ -53,6 +61,8 @@ const Router = () => {
       />
       <Route path="/logout" element={<Logout />} />
       <Route path="*" element={<NotFound />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/candidate" element={<CandidateRegistration />} />
     </Routes>
   );
 };

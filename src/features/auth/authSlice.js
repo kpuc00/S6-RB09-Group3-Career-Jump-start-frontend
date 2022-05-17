@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import cookie from "react-cookies";
-import { login, logout } from "./authAPI";
+import { login, register, logout } from "./authAPI";
 
 const userCookie = cookie.load("user") || null;
 const roles = userCookie ? userCookie.roles : null;
@@ -26,6 +26,19 @@ export const loginUser = createAsyncThunk(
   async (params, thunkAPI) => {
     const response = await login(params.email, params.password);
     // The value we return becomes the `fulfilled` action payload
+    return await response.json();
+  }
+);
+
+export const regUser = createAsyncThunk(
+  "auth/regUser",
+  async (params, thunkAPI) => {
+    const response = await register(
+      params.email,
+      params.username,
+      params.password,
+      params.role
+    );
     return await response.json();
   }
 );
@@ -82,6 +95,27 @@ export const authSlice = createSlice({
           localStorage.setItem("showLogoutPage", "true");
           state.loading = false;
         }
+      });
+    builder
+      .addCase(regUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(regUser.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) state.loading = false;
+        else {
+          state.user = action.payload;
+          cookie.save("user", action.payload, {
+            path: "/",
+            maxAge: 24 * 60 * 60,
+          });
+          state.register = true;
+        }
+      })
+      .addCase(regUser.rejected, (state, action) => {
+        console.log("rejected");
+        console.log(action.payload);
+        state.loading = false;
       });
     builder
       .addCase(logoutUser.pending, (state) => {
