@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { EuiTabs, EuiTab } from "@elastic/eui";
+import { useSelector } from "react-redux";
+import { selectAdminSelectedTabId } from "../../features/layout/layoutSlice";
 
 const tabs = [
   {
@@ -26,17 +28,12 @@ const tabs = [
 ];
 
 const AdminTabs = () => {
-  const [selectedTabId, setSelectedTabId] = useState("candidates");
-
-  const onSelectedTabChanged = (id) => {
-    setSelectedTabId(id);
-  };
+  const selectedTabId = useSelector(selectAdminSelectedTabId);
 
   const renderTabs = () => {
     return tabs.map((tab, index) => (
       <Link to={tab.link} key={index}>
         <EuiTab
-          onClick={() => onSelectedTabChanged(tab.id)}
           isSelected={tab.id === selectedTabId}
           disabled={tab.disabled}
           prepend={tab.prepend}

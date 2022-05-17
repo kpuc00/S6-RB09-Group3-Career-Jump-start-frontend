@@ -13,11 +13,13 @@ import {
   selectCompanies,
   selectUserLoading,
 } from "../../features/user/userSlice";
+import { setAdminSelectedTabId } from "../../features/layout/layoutSlice";
 
 const Companies = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setAdminSelectedTabId("companies"));
     dispatch(getCompanies());
   }, [dispatch]);
 

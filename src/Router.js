@@ -17,7 +17,6 @@ import {
   Register,
   Admin,
 } from "./pages";
-import Logout from "./pages/auth/Logout";
 import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
 const Router = () => {
@@ -59,10 +58,9 @@ const Router = () => {
         path="/page"
         element={user ? <Page /> : <Navigate replace to="/login" />}
       />
-      <Route path="/logout" element={<Logout />} />
-      <Route path="*" element={<NotFound />} />
       <Route path="/register" element={<Register />} />
       <Route path="/candidate" element={<CandidateRegistration />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

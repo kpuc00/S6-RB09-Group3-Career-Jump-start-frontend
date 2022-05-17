@@ -20,6 +20,7 @@ import {
 } from "../../features/user/userSlice";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
+import { setAdminSelectedTabId } from "../../features/layout/layoutSlice";
 
 const Candidates = () => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const Candidates = () => {
   const [updatedUser, setUpdatedUser] = useState(null);
 
   useEffect(() => {
+    dispatch(setAdminSelectedTabId("candidates"));
     dispatch(getCandidates());
   }, [dispatch]);
 
