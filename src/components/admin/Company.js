@@ -44,7 +44,7 @@ const Company = (props) => {
 
   const editCompany = () => {
     console.log("edit", updatedUser);
-    dispatch(updateUser(selectedUser.id, updatedUser));
+    dispatch(updateUser({ id: selectedUser.id, updatedUser }));
     setUpdatedUser(null);
     closeEditModal();
   };

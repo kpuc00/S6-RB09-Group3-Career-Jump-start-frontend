@@ -21,7 +21,7 @@ const EditModal = (props) => {
     <EuiModal onClose={onClose}>
       <EuiModalHeader>
         <EuiModalHeaderTitle>
-          <h1>Edit - {`${selectedUser.firstName} ${selectedUser.lastName}`}</h1>
+          <h1>Edit - {selectedUser.username}</h1>
         </EuiModalHeaderTitle>
       </EuiModalHeader>
 
@@ -38,13 +38,6 @@ const EditModal = (props) => {
             <EuiFieldText
               name="lastName"
               defaultValue={selectedUser.lastName}
-              onChange={handleUpdate}
-            />
-          </EuiFormRow>
-          <EuiFormRow label="username">
-            <EuiFieldText
-              name="username"
-              defaultValue={selectedUser.username}
               onChange={handleUpdate}
             />
           </EuiFormRow>

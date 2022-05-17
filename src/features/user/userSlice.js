@@ -36,17 +36,10 @@ export const getCompanies = createAsyncThunk("user/getCompanies", async () => {
 
 export const updateUser = createAsyncThunk(
   "user/updateUser",
-  async (id, updatedUser) => {
-    console.log("upd id", id);
-    console.log("upd user", updatedUser);
-    const response = await updUser(
-      id,
-      updatedUser.username,
-      updatedUser.firstName,
-      updatedUser.lastName,
-      updatedUser.phoneNumber,
-      updatedUser.email
-    );
+  async (params) => {
+    console.log("upd id", params.id);
+    console.log("upd user", params.updatedUser);
+    const response = await updUser(params.id, params.updatedUser);
     // // The value we return becomes the `fulfilled` action payload
     // const json = await response.json();
     console.log("response.json", await response.json());

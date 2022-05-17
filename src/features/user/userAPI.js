@@ -15,14 +15,14 @@ function fetchCompanies() {
   });
 }
 
-function updUser(id, username, firstName, lastName, phoneNumber, email) {
+function updUser(id, updatedUser) {
   return fetch(domain + api + `/${id}`, {
     method: "PUT",
-    body: JSON.stringify({ username, firstName, lastName, phoneNumber, email }),
-    credentials: "include",
+    body: JSON.stringify(updatedUser),
     headers: {
       "Content-Type": "application/json",
-    }
+    },
+    credentials: "include",
   });
 }
 
