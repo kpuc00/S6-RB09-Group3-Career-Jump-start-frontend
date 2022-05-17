@@ -17,9 +17,12 @@ function fetchCompanies() {
 
 function updUser(id, username, firstName, lastName, phoneNumber, email) {
   return fetch(domain + api + `/${id}`, {
-    method: "UPDATE",
+    method: "PUT",
     body: JSON.stringify({ username, firstName, lastName, phoneNumber, email }),
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    }
   });
 }
 
