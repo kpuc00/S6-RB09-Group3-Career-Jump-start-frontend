@@ -1,5 +1,8 @@
 .formContainer {
   height: auto;
+  text-align: center;
+  padding-bottom: 25px;
+  padding-top: 25px;
 }
 .header {
   line-height: 100px !important;

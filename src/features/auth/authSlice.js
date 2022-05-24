@@ -18,7 +18,6 @@ export const loginUser = createAsyncThunk(
     const response = await login(params.email, params.password);
     // The value we return becomes the `fulfilled` action payload
     const data = await response.json();
-    console.log(data);
     return data;
   }
 );
@@ -42,7 +41,6 @@ export const logoutUser = createAsyncThunk(
     const response = await logout();
     // The value we return becomes the `fulfilled` action payload
     const data = await response.json();
-    console.log(data);
     return data;
   }
 );
@@ -56,7 +54,7 @@ export const authSlice = createSlice({
     },
     setUser(state, action) {
       if (!state.user) state.user = action.payload;
-      console.log("authslice set user", state.user, action.payload);
+      // console.log("authslice set user", state.user, action.payload);
     },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -119,7 +117,7 @@ export const { authLoading, setUser } = authSlice.actions;
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectUser = (state) => {
-  console.log("selectuser", state.auth.user);
+  // console.log("selectuser", state.auth.user);
   return state.auth.user;
 };
 export const selectLoading = (state) => state.auth.loading;

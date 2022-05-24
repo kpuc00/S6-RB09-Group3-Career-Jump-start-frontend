@@ -1,4 +1,4 @@
-const domain = "http://localhost:8080/";
+const domain = "http://localhost:4200/";
 
 function login(email, password) {
   return fetch(domain + "api/auth/signin", {
