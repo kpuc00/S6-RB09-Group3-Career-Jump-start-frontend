@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   EuiPage,
   EuiPageBody,
@@ -95,6 +96,13 @@ const Login = () => {
               disabled={email !== "" && password !== "" ? false : true}
             />
           </EuiForm>
+          <EuiSpacer size="s" />
+          <EuiText textAlign="center">
+            <span>Not registered?</span>{" "}
+            <Link to="/register">
+              <span>Register</span>
+            </Link>
+          </EuiText>
         </EuiPageContent>
       </EuiPageBody>
     </EuiPage>
