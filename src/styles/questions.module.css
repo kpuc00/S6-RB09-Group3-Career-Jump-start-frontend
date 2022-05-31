@@ -1,0 +1,16 @@
+.questions{
+    text-align: left;
+}
+.container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 60vh;
+}
+.table{
+    border:1px solid black;
+    border-style: none solid solid none;
+    vertical-align: middle;
+  }

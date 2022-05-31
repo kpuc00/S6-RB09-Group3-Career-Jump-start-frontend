@@ -1,11 +1,11 @@
 import {
   EuiText,
-  EuiKeyPadMenu,
-  EuiFlexGroup,
   EuiKeyPadMenuItem,
+  useGeneratedHtmlId,
+  EuiButton,
 } from "@elastic/eui";
 import React, { useState, useEffect } from "react";
-import styles from "../../styles/questions-first.module.css";
+import styles from "../../styles/questions.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckDouble,
@@ -13,133 +13,201 @@ import {
   faXmark,
   faMinus,
 } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getQuestionsBySFId,
+  getSF,
+  selectQuestions,
+  selectSoftFactors,
+  answerPost,
+} from "../../features/softfactor/softfactorSlice";
 
-function Questions() {
-  const [isLoaded, setisLoaded] = useState(false);
-  // const [num, setNum] = useState(0);
-  const [sfData, setSfData] = useState([
-    {
-      id: null,
-      title: null,
-    },
-  ]);
-  const [qData, setQData] = useState([
-    {
-      id: null,
-      content: null,
-    },
-  ]);
+function Questions(props) {
+  const { num } = props;
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getSF());
+  }, [dispatch]);
+
+  const softfactors = useSelector(selectSoftFactors);
 
   useEffect(() => {
-    const url = "http://localhost:8080/softfactor/";
-    const options = {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-      },
-    };
-    if (!isLoaded) {
-      fetch(url, options)
-        .then((response) => response.json())
-        .then((data) => {
-          let ids = [];
-          data.map((element) => {
-            ids.push(element);
-          });
-          setSfData(ids);
-          setisLoaded(true);
-        });
+    const id = softfactors[num].id;
+    dispatch(getQuestionsBySFId({ id }));
+  }, [dispatch, num, softfactors]);
+
+  const questions = useSelector(selectQuestions);
+
+  let questionnaire;
+
+  const radioGroupName = useGeneratedHtmlId({ prefix: "radioGroup" });
+
+  const keypadRadioButtonId__1 = "Strongly Agree";
+  const keypadRadioButtonId__2 = "Agree";
+  const keypadRadioButtonId__3 = "No prefference";
+  const keypadRadioButtonId__4 = "Disagree";
+  const keypadRadioButtonId__5 = "Strongly Disagree";
+
+  const [singleSelectedID, setSingleSelectedID] = useState([]);
+
+  const addChoice = (button, id) => {
+    let obj = { button: button, question: id };
+    const test = singleSelectedID.some((e) => e.question === id);
+    if (!test) {
+      let arr = singleSelectedID.concat(obj);
+      setSingleSelectedID(arr);
+    } else {
+      let index = singleSelectedID.findIndex((e) => e.question === id);
+      let arr = (singleSelectedID.splice(index, 1), singleSelectedID);
+      let arr2 = arr.concat(obj);
+      setSingleSelectedID(arr2);
     }
-  });
+  };
 
-  // useEffect(() => {
-  //   const urlQ = "http://localhost:8080/question/?softFactorId=" + sfData[0].id;
-  //   const optionsQ = {
-  //     method: "GET",
-  //     headers: {
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json;charset=UTF-8",
-  //     },
-  //   };
-  //   fetch(urlQ, optionsQ)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setQData(data);
-  //       console.log(data);
-  //     });
-  // }, []);
+  function addAnswers() {
+    singleSelectedID.forEach((answer) => {
+      const content = answer.button.replace(answer.question.id, "");
+      const question = answer.question;
+      dispatch(answerPost({ content, question }));
+    });
+  }
 
-  const questions = qData.map((question) => (
-    <div key={question.id}>
-      <p>
-        {question.id}. {question.content}
-      </p>
-      <EuiFlexGroup>
-        <EuiKeyPadMenu
-          checkable={{ ariaLegend: "Single select as radios" }}
-          style={{ display: "contents" }}
-        >
-          {/* <EuiFlexItem> */}
+  let tbl;
+  if (questions !== null) {
+    questionnaire = questions.map((question) => (
+      <tr key={question.id} className={styles.table}>
+        <td className={styles.table}>{question.content}</td>
+        <td className={styles.table}>
           <EuiKeyPadMenuItem
             checkable="single"
-            name="test1"
-            id="1"
-            label="Strongly Agree"
+            name={radioGroupName + question.id}
+            id={keypadRadioButtonId__5 + question.id}
+            label=""
+            onChange={(id) => {
+              addChoice(id, question);
+            }}
+            isSelected={singleSelectedID.some(
+              (e) => e.button === keypadRadioButtonId__5 + question.id
+            )}
           >
-            <FontAwesomeIcon icon={faCheckDouble} />
+            <FontAwesomeIcon icon={faXmark} />
+            <FontAwesomeIcon icon={faXmark} />
           </EuiKeyPadMenuItem>
-          {/* </EuiFlexItem>
-          <EuiFlexItem> */}
+        </td>
+        <td className={styles.table}>
+          {" "}
           <EuiKeyPadMenuItem
             checkable="single"
-            name="test"
-            id="2"
-            label="Agree"
+            name={radioGroupName + question.id}
+            id={keypadRadioButtonId__4 + question.id}
+            label=""
+            onChange={(id) => {
+              addChoice(id, question);
+            }}
+            isSelected={singleSelectedID.some(
+              (e) => e.button === keypadRadioButtonId__4 + question.id
+            )}
           >
-            <FontAwesomeIcon icon={faCheck} />
+            <FontAwesomeIcon icon={faXmark} />
           </EuiKeyPadMenuItem>
-          {/* </EuiFlexItem>
-          <EuiFlexItem> */}
+        </td>
+        <td className={styles.table}>
           <EuiKeyPadMenuItem
             checkable="single"
-            name="test1"
-            id="1"
-            label="No prefference"
+            name={radioGroupName + question.id}
+            id={keypadRadioButtonId__3 + question.id}
+            label=""
+            onChange={(id) => {
+              addChoice(id, question);
+            }}
+            isSelected={singleSelectedID.some(
+              (e) => e.button === keypadRadioButtonId__3 + question.id
+            )}
           >
             <FontAwesomeIcon icon={faMinus} />
           </EuiKeyPadMenuItem>
-          {/* </EuiFlexItem>
-          <EuiFlexItem> */}
+        </td>
+        <td className={styles.table}>
           <EuiKeyPadMenuItem
             checkable="single"
-            name="test1"
-            id="1"
-            label="Disagree"
+            name={radioGroupName + question.id}
+            id={keypadRadioButtonId__2 + question.id}
+            label=""
+            onChange={(id) => {
+              addChoice(id, question);
+            }}
+            isSelected={singleSelectedID.some(
+              (e) => e.button === keypadRadioButtonId__2 + question.id
+            )}
           >
-            <FontAwesomeIcon icon={faXmark} />
+            <FontAwesomeIcon icon={faCheck} />
           </EuiKeyPadMenuItem>
-          {/* </EuiFlexItem>
-          <EuiFlexItem> */}
+        </td>
+        <td className={styles.table}>
           <EuiKeyPadMenuItem
             checkable="single"
-            name="test1"
-            id="1"
-            label="Strongly Disagree"
+            name={radioGroupName + question.id}
+            id={keypadRadioButtonId__1 + question.id}
+            label=""
+            onChange={(id) => {
+              addChoice(id, question);
+            }}
+            isSelected={singleSelectedID.some(
+              (e) => e.button === keypadRadioButtonId__1 + question.id
+            )}
           >
-            <FontAwesomeIcon icon={faXmark} />
-            <FontAwesomeIcon icon={faXmark} />
+            <FontAwesomeIcon icon={faCheckDouble} />
           </EuiKeyPadMenuItem>
-          {/* </EuiFlexItem> */}
-        </EuiKeyPadMenu>
-      </EuiFlexGroup>
-    </div>
-  ));
+        </td>
+      </tr>
+    ));
+    tbl = (
+      <table>
+        <thead>
+          <tr>
+            <th className={styles.table}>Question</th>
+            <th className={styles.table}>
+              Strongly <br />
+              Disagree
+            </th>
+            <th className={styles.table}>Disagree</th>
+            <th className={styles.table}>
+              No <br />
+              prefference
+            </th>
+            <th className={styles.table}>Agree</th>
+            <th className={styles.table}>
+              Strongly <br />
+              Agree
+            </th>
+          </tr>
+        </thead>
+        <tbody>{questionnaire}</tbody>
+      </table>
+    );
+  } else {
+    tbl = (
+      <div>
+        <EuiText>There are no questions for this soft factor yet.</EuiText>
+      </div>
+    );
+  }
+
+  let button;
+  if (num === softfactors.length - 1) {
+    button = (
+      <EuiButton fill onClick={addAnswers}>
+        Submit
+      </EuiButton>
+    );
+  }
   return (
-    <div>
+    <div className={styles.container}>
       <EuiText>
-        <h3>{sfData[0].title}</h3>
-        <div className={styles.questions}>{questions}</div>
+        <h3 style={{ textAlign: "center" }}>{softfactors[num].title}</h3>
+        {tbl}
+        {button}
       </EuiText>
     </div>
   );

@@ -10,6 +10,7 @@ import {
   Page,
   CandidateRegistration,
   Register,
+  Questionnaire
 } from "./pages";
 import Logout from "./pages/auth/Logout";
 
@@ -39,6 +40,7 @@ const Router = () => {
       <Route path="*" element={<NotFound />} />
       <Route path="/register" element={<Register />} />
       <Route path="/candidate" element={<CandidateRegistration />} />
+      <Route path="/questionnaire" element={<Questionnaire />}/>
     </Routes>
   );
 };

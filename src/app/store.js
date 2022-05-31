@@ -1,8 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
-import authSlice from "../features/auth/authSlice";
+import {authSlice, softfactorSlice} from "../features";
 
 export default configureStore({
   reducer: {
     auth: authSlice,
+    softfactor: softfactorSlice
   },
 });
