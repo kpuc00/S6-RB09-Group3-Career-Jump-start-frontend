@@ -1,4 +1,4 @@
-const domain = "http://localhost:8080/admin";
+const domain = "http://localhost:8081/admin";
 
 function getSoftFactors() {
   return fetch(domain + "/softfactor", {
