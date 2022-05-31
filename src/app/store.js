@@ -1,9 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import {authSlice, softfactorSlice} from "../features";
+import {
+  layoutSlice,
+  authSlice,
+  userSlice,
+  softfactorSlice,
+} from "../features";
 
 export default configureStore({
   reducer: {
+    layout: layoutSlice,
     auth: authSlice,
-    softfactor: softfactorSlice
+    user: userSlice,
+    softfactor: softfactorSlice,
   },
 });

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import {
   EuiPage,
   EuiPageBody,
@@ -11,14 +12,22 @@ import {
   EuiButtonIcon,
   EuiFieldPassword,
   EuiSpacer,
+  EuiCallOut,
 } from "@elastic/eui";
-import { loginUser, selectLoading } from "../../features/auth/authSlice";
+import {
+  loginUser,
+  selectError,
+  selectLoading,
+  selectMessage,
+} from "../../features/auth/authSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loading = useSelector(selectLoading);
   const dispatch = useDispatch();
+  const error = useSelector(selectError);
+  const message = useSelector(selectMessage);
 
   const handleChange = (e) => {
     switch (e.target.id) {
@@ -34,7 +43,8 @@ const Login = () => {
   };
 
   function submitForm() {
-    dispatch(loginUser({ email, password }));
+    if (email !== "" && password !== "")
+      dispatch(loginUser({ email, password }));
   }
 
   return (
@@ -48,9 +58,25 @@ const Login = () => {
         >
           <EuiText textAlign="center">
             <h1>Login</h1>
-            {loading && console.log("aaa")}
           </EuiText>
           <EuiSpacer size="m" />
+          {error && (
+            <>
+              <EuiCallOut
+                color="danger"
+                iconType="alert"
+                title={error.message}
+              />
+              <EuiSpacer />
+            </>
+          )}
+          {message && (
+            <>
+              <EuiCallOut title={message.message} />
+              <EuiSpacer />
+            </>
+          )}
+
           <EuiForm component="form">
             <EuiFormRow onChange={handleChange} id="email" label="Email">
               <EuiFieldText name="email" />
@@ -67,8 +93,16 @@ const Login = () => {
               iconSize="l"
               size="m"
               aria-label="Login"
+              disabled={email !== "" && password !== "" ? false : true}
             />
           </EuiForm>
+          <EuiSpacer size="s" />
+          <EuiText textAlign="center">
+            <span>Not registered?</span>{" "}
+            <Link to="/register">
+              <span>Register</span>
+            </Link>
+          </EuiText>
         </EuiPageContent>
       </EuiPageBody>
     </EuiPage>
