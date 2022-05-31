@@ -16,6 +16,7 @@ import {
   CandidateRegistration,
   Register,
   Admin,
+  Questionnaire,
 } from "./pages";
 import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
@@ -60,6 +61,7 @@ const Router = () => {
       />
       <Route path="/register" element={<Register />} />
       <Route path="/candidate" element={<CandidateRegistration />} />
+      <Route path="/questionnaire" element={<Questionnaire />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

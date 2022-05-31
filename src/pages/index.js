@@ -5,4 +5,14 @@ import Login from "./auth/Login";
 import Admin from "./Admin";
 import CandidateRegistration from "./auth/candidate-registration";
 import Register from "./Register";
-export { NotFound, Home, Page, Login, CandidateRegistration, Register, Admin };
+import Questionnaire from "./Questionnaire.js";
+export {
+  NotFound,
+  Home,
+  Page,
+  Login,
+  CandidateRegistration,
+  Register,
+  Admin,
+  Questionnaire,
+};

@@ -1,5 +1,6 @@
 import layoutSlice from "./layout/layoutSlice";
 import authSlice from "./auth/authSlice";
 import userSlice from "./user/userSlice";
+import softfactorSlice from "./softfactor/softfactorSlice";
 
-export { layoutSlice, authSlice, userSlice };
+export { authSlice, layoutSlice, softfactorSlice, userSlice };

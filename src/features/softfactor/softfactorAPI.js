@@ -1,27 +1,26 @@
-const domain = "http://localhost:8080/";
+const domain = "http://localhost:8081/admin";
 
 function getSoftFactors() {
-  return fetch(domain + "softfactor/", {
+  return fetch(domain + "/softfactor", {
     method: "GET",
-    headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json;charset=UTF-8",
-    },
   });
 }
 
-// function testUser() {
-//   return fetch(domain + "api/test/user", {
-//     method: "GET",
-//     credentials: "include",
-//   });
-// }
+function getQuestionsBySoftFactorId(id){
+  return fetch(domain + "/question/?softFactorId=" + id, {
+    method: "GET",
+  })
+}
 
-// function testAdmin() {
-//   return fetch(domain + "api/test/admin", {
-//     method: "GET",
-//     credentials: "include",
-//   });
-// }
+function postAnswer(content, question){
+  return fetch(domain + "/answers", {
+    method: "POST",
+    body: JSON.stringify({content, question}),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
 
-export { getSoftFactors };
+export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer };
