@@ -6,6 +6,18 @@ function getSoftFactors() {
   });
 }
 
+function updateSoftFactor(id, sf) {
+  console.log(JSON.stringify({sf}));
+  return fetch(domain + "/softfactor" + `/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(sf),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+
 function getQuestionsBySoftFactorId(id){
   return fetch(domain + "/question/?softFactorId=" + id, {
     method: "GET",
@@ -23,4 +35,4 @@ function postAnswer(content, question){
   });
 }
 
-export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer };
+export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer, updateSoftFactor };
