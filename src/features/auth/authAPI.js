@@ -36,11 +36,10 @@ function testAdmin() {
   });
 }
 
-function register(email, username, password, role) {
-  console.log({ email, username, password, role });
+function register(username, firstName, lastName, phoneNumber, dob, email, password, role) {
   return fetch(domain + "api/auth/signup", {
     method: "POST",
-    body: JSON.stringify({ email, username, password, role }),
+    body: JSON.stringify({username, firstName, lastName, phoneNumber, dob, email, password, role}),
     headers: {
       "Content-Type": "application/json",
     },

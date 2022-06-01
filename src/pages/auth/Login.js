@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -18,7 +18,7 @@ import {
   loginUser,
   selectError,
   selectLoading,
-  selectMessage,
+  selectMessage, setRegisteredState,
 } from "../../features/auth/authSlice";
 
 const Login = () => {
@@ -28,6 +28,10 @@ const Login = () => {
   const dispatch = useDispatch();
   const error = useSelector(selectError);
   const message = useSelector(selectMessage);
+
+  useEffect(()=>{
+    dispatch(setRegisteredState(false));
+  },[dispatch])
 
   const handleChange = (e) => {
     switch (e.target.id) {

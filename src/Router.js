@@ -5,7 +5,7 @@ import {
   selectIsAdmin,
   selectIsCandidate,
   selectIsCompany,
-  selectIsMatcher,
+  selectIsMatcher, selectIsRegistered,
   selectUser,
 } from "./features/auth/authSlice";
 import {
@@ -26,6 +26,7 @@ const Router = () => {
   const isCandidate = useSelector(selectIsCandidate);
   const isMatcher = useSelector(selectIsMatcher);
   const isAdmin = useSelector(selectIsAdmin);
+  const isRegistered = useSelector(selectIsRegistered)
 
   return (
     <Routes>
@@ -59,8 +60,8 @@ const Router = () => {
         path="/page"
         element={user ? <Page /> : <Navigate replace to="/login" />}
       />
-      <Route path="/register" element={<Register />} />
-      <Route path="/candidate" element={<CandidateRegistration />} />
+      <Route path="/register" element={isRegistered?<Navigate replace to="/login"/> : <Register/>} />
+      <Route path="/candidate" element={isRegistered?<Navigate replace to="/login"/> : <CandidateRegistration/>} />
       <Route path="/questionnaire" element={<Questionnaire />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
