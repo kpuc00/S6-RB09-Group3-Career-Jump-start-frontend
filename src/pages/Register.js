@@ -23,7 +23,7 @@ const Register = () => {
         style={{ gridColumnStart: "1", gridColumnEnd: "2", gridRowStart: "2" }}
       >
         <h1 style={{ fontFamily: "Helvetica, sans-serif" }}>Candidate</h1>{" "}
-        <Link to="/candidate">
+        <Link to="/register/candidate">
           <EuiButton
             type="submit"
             fill

@@ -39,7 +39,9 @@ const Router = () => {
       <Route path="/logout" element={<Logout />} />
       <Route path="*" element={<NotFound />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/candidate" element={<CandidateRegistration />} />
+      <Route 
+      path="/register/candidate" 
+      element={user ? <Navigate replace to ="/questionnaire"/>:<CandidateRegistration />} />
       <Route path="/questionnaire" element={<Questionnaire />}/>
     </Routes>
   );

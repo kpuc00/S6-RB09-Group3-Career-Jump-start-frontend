@@ -29,7 +29,11 @@ export const regUser = createAsyncThunk(
       params.email,
       params.username,
       params.password,
-      params.role
+      params.role,
+      params.firstName, 
+      params.lastName, 
+      params.phone, 
+      params.startDate
     );
     return await response.json();
   }

@@ -22,35 +22,61 @@ function RegistrationForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("")
   const role = ["candidate"];
   const loading = useSelector(selectLoading);
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
     switch (e.target.id) {
+      case "username":
+        setUsername(e.target.value);
+        break;
+      case "firstName":
+        setFirstName(e.target.value);
+        break;
+      case "lastName":
+        setLastName(e.target.value);
+        break;
+      case "phone":
+        setPhone(e.target.value);
+        break;  
       case "email":
         setEmail(e.target.value);
         break;
       case "password":
         setPassword(e.target.value);
         break;
-      case "username":
-        setUsername(e.target.value);
-        break;
       default:
         break;
     }
   };
   function submitForm() {
-    dispatch(regUser({ email, username, password, role }));
+    dispatch(regUser({ email, username, password, role, firstName, lastName, phone, startDate }));
   }
   return (
     <form className={styles.container}>
       <EuiFieldText
-        placeholder="First & Last name"
-        name="name"
+        placeholder="Username"
+        name="username"
         autoComplete="on"
         id="username"
+        onChange={handleChange}
+      />
+      <EuiFieldText
+        placeholder="First name"
+        name="firstName"
+        autoComplete="on"
+        id="firstName"
+        onChange={handleChange}
+      />
+      <EuiFieldText
+        placeholder="Last name"
+        name="lastName"
+        autoComplete="on"
+        id="lastName"
         onChange={handleChange}
       />
       <EuiFieldText
@@ -66,6 +92,8 @@ function RegistrationForm() {
         placeholder="Phone"
         name="phone"
         autoComplete="on"
+        id="phone"
+        onChange={handleChange}
       />
       <EuiDatePicker
         label="Date of Birth"
@@ -74,6 +102,7 @@ function RegistrationForm() {
         placeholder="Date of Birth"
         minDate={minDate}
         maxDate={maxDate}
+        id="dob"
       />
       <EuiFieldPassword
         placeholder="Password"
