@@ -5,6 +5,7 @@ const initialState = {
   loading: false,
   softFactors: [],
   questions: [],
+  questionsAnswered: 0,
   message: "",
 };
 
@@ -27,6 +28,7 @@ export const getQuestionsBySFId = createAsyncThunk(
   async(params, thunkAPI) => {
     const response = await getQuestionsBySoftFactorId(params.id);
     const data = await response.json();
+    console.log("Question loaded", data)
     return data;
   }
 )
@@ -36,6 +38,7 @@ export const answerPost = createAsyncThunk(
   async(params, thunkAPI) => {
     const response = await postAnswer(params.content, params.question);
     const data = await response.json();
+    console.log(data)
     return data;
   }
 )
@@ -79,7 +82,9 @@ export const softfactorSlice = createSlice({
       state.loading = false
       if (action.payload.status) state.loading = false;
       else {
-        state.message = action.payload.message
+        console.log("answerPost fulffilled");
+        state.questionsAnswered += 1;
+        state.message = action.payload.message;
         state.loading = false;
       }
     })
@@ -94,6 +99,7 @@ export const softfactorSlice = createSlice({
 
 export const selectSoftFactors = (state) => state.softfactor.softFactors
 export const selectQuestions = (state) => state.softfactor.questions
+export const selectQuestionsAnswered = (state) => state.softfactor.questionsAnswered
 export const postMessage = (state) => state.softfactor.message
 
 export default softfactorSlice.reducer;

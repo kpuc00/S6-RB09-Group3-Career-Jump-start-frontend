@@ -12,11 +12,12 @@ import {
   Home,
   Login,
   NotFound,
-  Page,
+  ProfilePage,
   CandidateRegistration,
   Register,
   Admin,
   Questionnaire,
+  Kur
 } from "./pages";
 import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
@@ -30,14 +31,29 @@ const Router = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route
+          path="/"
+          element={
+            user && isCompany ? (
+                <Navigate replace to="/" />
+            ) : user && isCandidate ? (
+                <Navigate replace to="/profile" />
+            ) : user && isMatcher ? (
+                <Navigate replace to="/" />
+            ) : user && isAdmin ? (
+                <Navigate replace to="/admin" />
+            ) : (
+                <Home />
+            )
+          }
+      />
       <Route
         path="/login"
         element={
           user && isCompany ? (
             <Navigate replace to="/" />
           ) : user && isCandidate ? (
-            <Navigate replace to="/" />
+            <Navigate replace to="/profile" />
           ) : user && isMatcher ? (
             <Navigate replace to="/" />
           ) : user && isAdmin ? (
@@ -57,8 +73,8 @@ const Router = () => {
         <Route path="questions" element={<Questions />} />
       </Route>
       <Route
-        path="/page"
-        element={user ? <Page /> : <Navigate replace to="/login" />}
+        path="/profile"
+        element={user ? <ProfilePage /> : <Navigate replace to="/login" />}
       />
       <Route path="/register" element={isRegistered?<Navigate replace to="/login"/> : <Register/>} />
       <Route path="/candidate" element={isRegistered?<Navigate replace to="/login"/> : <CandidateRegistration/>} />
