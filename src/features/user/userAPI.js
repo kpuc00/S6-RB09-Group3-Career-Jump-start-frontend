@@ -1,5 +1,5 @@
 const domain = "http://localhost:8080/";
-const api = "api/admin/users";
+const api = "admin/users";
 
 function fetchCandidates() {
   return fetch(domain + api + "/candidates", {

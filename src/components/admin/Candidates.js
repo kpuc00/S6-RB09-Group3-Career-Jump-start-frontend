@@ -115,7 +115,7 @@ const Candidates = () => {
     },
   ];
 
-  const items = candidates.filter((candidate, index) => index < 10);
+  const items = candidates.filter((candidate, index) => index < 1000);
 
   const showEditModal = (item) => {
     dispatch(selectUser(item));
