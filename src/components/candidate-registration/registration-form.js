@@ -7,7 +7,6 @@ import {
   EuiDatePicker,
   EuiButton,
   EuiCallOut,
-  EuiSpacer,
 } from "@elastic/eui";
 import moment from "moment";
 import {
@@ -88,7 +87,7 @@ function RegistrationForm() {
         {error && (
           <>
             <EuiCallOut color="danger" iconType="alert" title={error.message} />
-            <EuiSpacer />
+            {/* <EuiSpacer /> */}
           </>
         )}
         <EuiFieldText

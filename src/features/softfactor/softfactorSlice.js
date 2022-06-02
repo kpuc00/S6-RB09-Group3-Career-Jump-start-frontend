@@ -36,7 +36,7 @@ export const getQuestionsBySFId = createAsyncThunk(
 export const answerPost = createAsyncThunk(
   "softfactor/answerPost",
   async(params, thunkAPI) => {
-    const response = await postAnswer(params.content, params.question);
+    const response = await postAnswer(params.answers);
     const data = await response.json();
     console.log(data)
     return data;
