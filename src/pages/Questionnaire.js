@@ -28,7 +28,6 @@ function Questionnaire() {
 
   useEffect(() => {
     dispatch(getSF());
-    console.log("Question answered", questionsAnswered);
     //console.log("Questions length", questions.length);
     // if (questionsAnswered === questions.length) {
     //   console.log("Razmera e ednakuv");

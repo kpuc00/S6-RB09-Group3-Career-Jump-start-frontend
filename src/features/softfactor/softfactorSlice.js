@@ -28,7 +28,6 @@ export const getQuestionsBySFId = createAsyncThunk(
   async(params, thunkAPI) => {
     const response = await getQuestionsBySoftFactorId(params.id);
     const data = await response.json();
-    console.log("Question loaded", data)
     return data;
   }
 )
