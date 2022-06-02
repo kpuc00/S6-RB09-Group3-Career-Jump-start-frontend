@@ -25,17 +25,6 @@ const Home = () => {
           .
         </h1>
       </EuiText>
-      <hr
-        style={{
-          width: "50%",
-          transform: "rotate(90deg)",
-          gridColumnStart: "1",
-          gridColumnEnd: "3",
-          gridRowStart: "2",
-          border: "1px solid",
-          maxWidth: "450px",
-        }}
-      />
       <EuiText
         style={{ gridColumnStart: "1", gridColumnEnd: "2", gridRowStart: "2" }}
       >
