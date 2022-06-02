@@ -20,6 +20,7 @@ import {
   selectQuestions,
   selectSoftFactors,
   answerPost,
+  selectMessage,
 } from "../../features/softfactor/softfactorSlice";
 
 function Questions(props) {
@@ -38,6 +39,7 @@ function Questions(props) {
   }, [dispatch, num, softfactors]);
 
   const questions = useSelector(selectQuestions);
+  const message = useSelector(selectMessage);
 
   let questionnaire;
 
@@ -195,7 +197,7 @@ function Questions(props) {
   } else {
     tbl = (
       <div>
-        <EuiText>There are no questions for this soft factor yet.</EuiText>
+        <EuiText>{message}</EuiText>
       </div>
     );
   }
