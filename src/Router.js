@@ -90,7 +90,16 @@ const Router = () => {
           )
         }
       />
-      <Route path="/questionnaire" element={<Questionnaire />} />
+      <Route
+        path="/questionnaire"
+        element={
+          user && !user.questionnaireAnswered ? (
+            <Questionnaire />
+          ) : (
+            <Navigate replace to="/login" />
+          )
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

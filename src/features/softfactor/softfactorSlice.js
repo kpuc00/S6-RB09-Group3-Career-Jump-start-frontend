@@ -9,8 +9,9 @@ const initialState = {
   loading: false,
   softFactors: [],
   questions: [],
-  questionsAnswered: 0,
+  questionsAnswered: false,
   message: null,
+  error: null,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -22,8 +23,7 @@ export const getSF = createAsyncThunk(
   "softfactor/getSoftFactors",
   async (thunkAPI) => {
     const response = await getSoftFactors();
-    const data = await response.json();
-    return data;
+    return await response.json();
   }
 );
 
@@ -31,9 +31,7 @@ export const getQuestionsBySFId = createAsyncThunk(
   "softfactor/getQuestionsBySoftFactorId",
   async (params, thunkAPI) => {
     const response = await getQuestionsBySoftFactorId(params.id);
-    const data = await response.json();
-    console.log("Question loaded", data);
-    return data;
+    return await response.json();
   }
 );
 
@@ -41,9 +39,8 @@ export const answerPost = createAsyncThunk(
   "softfactor/answerPost",
   async (params, thunkAPI) => {
     const response = await postAnswer(params.answers);
-    const data = await response.json();
-    console.log(data);
-    return data;
+    const json = await response.json();
+    return { status: response.status, ...json };
   }
 );
 
@@ -65,6 +62,10 @@ export const softfactorSlice = createSlice({
           state.softFactors = action.payload.item;
           state.loading = false;
         }
+      })
+      .addCase(getSF.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(getQuestionsBySFId.pending, (state) => {
@@ -79,20 +80,31 @@ export const softfactorSlice = createSlice({
           state.message = action.payload.message;
           state.loading = false;
         }
+      })
+      .addCase(getQuestionsBySFId.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(answerPost.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(answerPost.fulfilled, (state, action) => {
+        console.log(action.payload);
         state.loading = false;
-        if (action.payload.status) state.loading = false;
-        else {
-          console.log("answerPost fulffilled");
-          state.questionsAnswered += 1;
+        if (action.payload.status === 200) {
+          state.questionsAnswered = true;
           state.message = action.payload.message;
           state.loading = false;
+        } else {
+          state.error = action.payload.message;
         }
+      })
+      .addCase(answerPost.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
       });
   },
 });
@@ -108,6 +120,7 @@ export const selectQuestions = (state) => state.softfactor.questions;
 export const selectQuestionsAnswered = (state) =>
   state.softfactor.questionsAnswered;
 export const selectMessage = (state) => state.softfactor.message;
+export const selectError = (state) => state.softfactor.error;
 export const postMessage = (state) => state.softfactor.message;
 
 export default softfactorSlice.reducer;

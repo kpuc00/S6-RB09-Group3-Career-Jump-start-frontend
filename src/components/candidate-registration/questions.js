@@ -67,17 +67,14 @@ function Questions(props) {
     }
   };
 
-  async function addAnswers() {
+  function addAnswers() {
     let answers = [];
-    await singleSelectedID.forEach((answer) => {
+    singleSelectedID.forEach((answer) => {
       const content = answer.button.replace(answer.question.id, "");
       const question = answer.question;
-      answers.push({content,question})
-      // console.log("Answer Added", answer);
+      answers.push({ content, question });
     });
-    console.log(answers)
-    dispatch(answerPost({answers}));
-    // console.log("Foreach finished");
+    dispatch(answerPost({ answers }));
   }
 
   let tbl;
