@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
   EuiText,
@@ -12,18 +12,6 @@ import { selectUser } from "../features/auth/authSlice";
 
 const ProfilePage = () => {
   const user = useSelector(selectUser);
-  const [userLoaded, setUserLoaded] = useState(false);
-  const navigate = useNavigate();
-  useEffect(() => {
-    console.log(user);
-
-    if (user) setUserLoaded(true);
-    console.log(userLoaded);
-  }, [user, userLoaded]);
-
-  function startQuestionnaire() {
-    navigate("/questionnaire");
-  }
 
   return (
     <EuiPage>
@@ -33,19 +21,16 @@ const ProfilePage = () => {
             Welcome, {user ? `${user.firstName} ${user.lastName}` : "unknown"}
           </h1>
         </EuiTitle>
-        <EuiCallOut
-          title="To find the right job for you, first we need you to answer our quick questionnaire"
-          color="warning"
-        >
-          <EuiButton
-            onClick={() => startQuestionnaire()}
-            href="#"
+        {user && user.questionnaireAnswered === false && (
+          <EuiCallOut
+            title="To find the right job for you, first we need you to fill our questionnaire!"
             color="warning"
-            justify
           >
-            Start Questionnaire
-          </EuiButton>
-        </EuiCallOut>
+            <Link to="/questionnaire">
+              <EuiButton color="warning">Start Questionnaire</EuiButton>
+            </Link>
+          </EuiCallOut>
+        )}
         <h6>Email:</h6>
         <p>{user && user.email}</p>
         <h6>Roles:</h6>
