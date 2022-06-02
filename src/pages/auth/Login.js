@@ -18,25 +18,26 @@ import {
   loginUser,
   selectError,
   selectLoading,
-  selectMessage, setRegisteredState,
+  selectMessage,
+  setRegisteredState,
 } from "../../features/auth/authSlice";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const loading = useSelector(selectLoading);
   const dispatch = useDispatch();
   const error = useSelector(selectError);
   const message = useSelector(selectMessage);
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(setRegisteredState(false));
-  },[dispatch])
+  }, [dispatch]);
 
   const handleChange = (e) => {
     switch (e.target.id) {
-      case "email":
-        setEmail(e.target.value);
+      case "username":
+        setUsername(e.target.value);
         break;
       case "password":
         setPassword(e.target.value);
@@ -47,8 +48,8 @@ const Login = () => {
   };
 
   function submitForm() {
-    if (email !== "" && password !== "")
-      dispatch(loginUser({ email, password }));
+    if (username !== "" && password !== "")
+      dispatch(loginUser({ username, password }));
   }
 
   return (
@@ -82,8 +83,8 @@ const Login = () => {
           )}
 
           <EuiForm component="form">
-            <EuiFormRow onChange={handleChange} id="email" label="Email">
-              <EuiFieldText name="email" />
+            <EuiFormRow onChange={handleChange} id="username" label="Username">
+              <EuiFieldText name="username" />
             </EuiFormRow>
             <EuiFormRow onChange={handleChange} id="password" label="Password">
               <EuiFieldPassword name="password" />
@@ -97,7 +98,7 @@ const Login = () => {
               iconSize="l"
               size="m"
               aria-label="Login"
-              disabled={email !== "" && password !== "" ? false : true}
+              disabled={username !== "" && password !== "" ? false : true}
             />
           </EuiForm>
           <EuiSpacer size="s" />

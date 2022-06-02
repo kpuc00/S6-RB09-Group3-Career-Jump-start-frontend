@@ -25,7 +25,7 @@ const initialState = {
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (params, thunkAPI) => {
-    const response = await login(params.email, params.password);
+    const response = await login(params.username, params.password);
     // The value we return becomes the `fulfilled` action payload
     return await response.json();
   }
