@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   EuiText,
   EuiButton,
@@ -8,15 +8,46 @@ import {
   EuiPageBody,
   EuiTitle,
   EuiCallOut,
+  EuiLoadingSpinner,
+  EuiBasicTable,
   EuiSpacer,
 } from "@elastic/eui";
 import moment from "moment";
 import { selectUser } from "../features/auth/authSlice";
-import { selectQuestionsAnswered } from "../features/softfactor/softfactorSlice";
+import {
+  getSFAnswersByUsername,
+  selectAnswers,
+  selectAnswersLoading,
+  selectQuestionsAnswered,
+} from "../features/softfactor/softfactorSlice";
 
 const ProfilePage = () => {
+  const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const questionsAnswered = useSelector(selectQuestionsAnswered);
+
+  useEffect(() => {
+    dispatch(getSFAnswersByUsername(user.username));
+  }, [dispatch, user.username]);
+
+  const answersLoading = useSelector(selectAnswersLoading);
+  const answers = useSelector(selectAnswers);
+  console.log(answers);
+
+  const columns = [
+    {
+      field: "question.softFactor.title",
+      name: "Soft Factor",
+    },
+    {
+      field: "question.content",
+      name: "Question",
+    },
+    {
+      field: "content",
+      name: "Answer",
+    },
+  ];
 
   return (
     <EuiPage>
@@ -64,11 +95,23 @@ const ProfilePage = () => {
               {user && user.roles}
             </li>
           </ul>
-          <h4>Your answers to the questionnaire: </h4>
         </EuiText>
-        {user && user.questionnaireAnswered
-          ? "Loading..."
-          : "Not answered yet."}
+        <EuiSpacer />
+        {answersLoading ? (
+          <EuiLoadingSpinner size="xl" />
+        ) : (
+          answers && (
+            <EuiText>
+              <h4>Your answers to the questionnaire: </h4>
+              <EuiBasicTable
+                tableCaption="Your answers"
+                items={answers}
+                rowHeader="name"
+                columns={columns}
+              />
+            </EuiText>
+          )
+        )}
       </EuiPageBody>
     </EuiPage>
   );

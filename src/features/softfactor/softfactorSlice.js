@@ -3,12 +3,15 @@ import {
   getSoftFactors,
   getQuestionsBySoftFactorId,
   postAnswer,
+  getAnswersbyUsername,
 } from "./softfactorAPI";
 
 const initialState = {
   loading: false,
   softFactors: [],
   questions: [],
+  answers: [],
+  answersLoading: false,
   questionsAnswered: false,
   message: null,
   error: null,
@@ -39,6 +42,15 @@ export const answerPost = createAsyncThunk(
   "softfactor/answerPost",
   async (params, thunkAPI) => {
     const response = await postAnswer(params.answers);
+    const json = await response.json();
+    return { status: response.status, ...json };
+  }
+);
+
+export const getSFAnswersByUsername = createAsyncThunk(
+  "softfactor/getSFAnswersByUsername",
+  async (username, thunkAPI) => {
+    const response = await getAnswersbyUsername(username);
     const json = await response.json();
     return { status: response.status, ...json };
   }
@@ -106,6 +118,14 @@ export const softfactorSlice = createSlice({
         state.loading = false;
         state.error = "Something went wrong! Please try again later.";
       });
+    builder
+      .addCase(getSFAnswersByUsername.pending, (state) => {})
+      .addCase(getSFAnswersByUsername.fulfilled, (state, action) => {
+        if (action.payload.status === 200) {
+          state.answers = action.payload.item;
+        } else {
+        }
+      });
   },
 });
 
@@ -122,5 +142,7 @@ export const selectQuestionsAnswered = (state) =>
 export const selectMessage = (state) => state.softfactor.message;
 export const selectError = (state) => state.softfactor.error;
 export const postMessage = (state) => state.softfactor.message;
+export const selectAnswersLoading = (state) => state.softfactor.answersLoading;
+export const selectAnswers = (state) => state.softfactor.answers;
 
 export default softfactorSlice.reducer;
