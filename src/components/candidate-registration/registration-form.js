@@ -44,9 +44,6 @@ function RegistrationForm() {
         break;
       case "lastName":
         setLastName(e.target.value);
-        break;
-      case "phone":
-        setPhone(e.target.value);
         break;  
       case "email":
         setEmail(e.target.value);
