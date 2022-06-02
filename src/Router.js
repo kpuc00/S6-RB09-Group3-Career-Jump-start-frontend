@@ -1,48 +1,85 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import cookie from "react-cookies";
-import { useSelector, useDispatch } from "react-redux";
-import { selectUser, setUser } from "./features/auth/authSlice";
+import { useSelector } from "react-redux";
+import {
+  selectIsAdmin,
+  selectIsCandidate,
+  selectIsCompany,
+  selectIsMatcher, selectIsRegistered,
+  selectUser,
+} from "./features/auth/authSlice";
 import {
   Home,
   Login,
   NotFound,
-  Page,
+  ProfilePage,
   CandidateRegistration,
   Register,
-  Questionnaire
+  Admin,
+  Questionnaire,
+  Kur
 } from "./pages";
-import Logout from "./pages/auth/Logout";
+import { Candidates, Companies, Questions, SoftFactors } from "./components";
 
 const Router = () => {
   const user = useSelector(selectUser);
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const userCookie = cookie.load("user");
-    if (userCookie) {
-      dispatch(setUser(userCookie));
-    }
-  }, [dispatch]);
+  const isCompany = useSelector(selectIsCompany);
+  const isCandidate = useSelector(selectIsCandidate);
+  const isMatcher = useSelector(selectIsMatcher);
+  const isAdmin = useSelector(selectIsAdmin);
+  const isRegistered = useSelector(selectIsRegistered)
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route
+          path="/"
+          element={
+            user && isCompany ? (
+                <Navigate replace to="/" />
+            ) : user && isCandidate ? (
+                <Navigate replace to="/profile" />
+            ) : user && isMatcher ? (
+                <Navigate replace to="/" />
+            ) : user && isAdmin ? (
+                <Navigate replace to="/admin" />
+            ) : (
+                <Home />
+            )
+          }
+      />
       <Route
         path="/login"
-        element={user ? <Navigate replace to="/" /> : <Login />}
+        element={
+          user && isCompany ? (
+            <Navigate replace to="/" />
+          ) : user && isCandidate ? (
+            <Navigate replace to="/profile" />
+          ) : user && isMatcher ? (
+            <Navigate replace to="/" />
+          ) : user && isAdmin ? (
+            <Navigate replace to="/admin" />
+          ) : (
+            <Login />
+          )
+        }
       />
       <Route
-        path="/page"
-        element={user ? <Page /> : <Navigate replace to="/login" />}
+        path="/admin"
+        element={user ? <Admin /> : <Navigate replace to="/login" />}
+      >
+        <Route path="candidates" element={<Candidates />} />
+        <Route path="companies" element={<Companies />} />
+        <Route path="softfactors" element={<SoftFactors />} />
+        <Route path="questions" element={<Questions />} />
+      </Route>
+      <Route
+        path="/profile"
+        element={user ? <ProfilePage /> : <Navigate replace to="/login" />}
       />
-      <Route path="/logout" element={<Logout />} />
+      <Route path="/register" element={isRegistered?<Navigate replace to="/login"/> : <Register/>} />
+      <Route path="/candidate" element={isRegistered?<Navigate replace to="/login"/> : <CandidateRegistration/>} />
+      <Route path="/questionnaire" element={<Questionnaire />} />
       <Route path="*" element={<NotFound />} />
-      <Route path="/register" element={<Register />} />
-      <Route 
-      path="/register/candidate" 
-      element={user ? <Navigate replace to ="/questionnaire"/>:<CandidateRegistration />} />
-      <Route path="/questionnaire" element={<Questionnaire />}/>
     </Routes>
   );
 };
