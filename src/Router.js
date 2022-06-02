@@ -65,7 +65,7 @@ const Router = () => {
       />
       <Route
         path="/admin"
-        element={user ? <Admin /> : <Navigate replace to="/login" />}
+        element={user && isAdmin ? <Admin /> : <Navigate replace to="/login" />}
       >
         <Route path="candidates" element={<Candidates />} />
         <Route path="companies" element={<Companies />} />
