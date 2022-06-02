@@ -10,27 +10,31 @@ import {
     EuiButtonEmpty,
     EuiButton,
   } from "@elastic/eui";
-
-  const AddModal = (props) => {
+  import { useSelector } from "react-redux";
+  import { selectSelectedQ } from "../../features/softfactor/softfactorSlice";
+  
+  const EditModalQuestions = (props) => {
     const { onClose, onConfirm, handleUpdate } = props;
+    
+    const selectSelected = useSelector(selectSelectedQ);
   
     return (
       <EuiModal onClose={onClose}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
-            <h1>Add new Soft Factor</h1>
+            <h1>Edit question</h1>
           </EuiModalHeaderTitle>
         </EuiModalHeader>
   
         <EuiModalBody>
-          <EuiForm component="form">
+          <EuiForm id={"editForm" + selectSelected.id} component="form">
             <EuiFormRow label="Title">
               <EuiFieldText
-                name="title"
+                name="content"
+                defaultValue={selectSelected.content}
                 onChange={handleUpdate}
               />
             </EuiFormRow>
-            
           </EuiForm>
         </EuiModalBody>
   
@@ -39,7 +43,7 @@ import {
   
           <EuiButton
             type="submit"
-            //form="new-soft-factor"
+            form={"editForm" + selectSelected.id}
             onClick={onConfirm}
             fill
           >
@@ -49,5 +53,5 @@ import {
       </EuiModal>
     );
   };
-  export default AddModal;
+  export default EditModalQuestions;
   

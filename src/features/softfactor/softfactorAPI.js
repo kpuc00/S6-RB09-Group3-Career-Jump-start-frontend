@@ -7,8 +7,8 @@ function getSoftFactors() {
 }
 
 function updateSoftFactor(id, sf) {
-  console.log(JSON.stringify({sf}));
-  return fetch(domain + "/softfactor" + `/${id}`, {
+  //console.log(JSON.stringify({sf}));
+  return fetch(domain + "/softfactor/" + id, {
     method: "PUT",
     body: JSON.stringify(sf),
     headers: {
@@ -35,4 +35,45 @@ function postAnswer(content, question){
   });
 }
 
-export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer, updateSoftFactor };
+function postSF(softFactor) {
+  return fetch(domain + "/softfactor", {
+    method: "POST",
+    body: JSON.stringify(softFactor),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+
+function deleteSFAPI(id) {
+  return fetch(domain + "/softfactor" + `/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+}
+
+function updateQuestionAPI(id, question){
+  console.log("id", id);
+  console.log("passed question", JSON.stringify(question));
+  return fetch(domain + "/question/" + id, {
+    method: "PUT",
+    body: JSON.stringify(question),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+
+function postQuestionAPI(question) {
+  return fetch(domain + "/question", {
+    method: "POST",
+    body: JSON.stringify(question),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer, updateSoftFactor, postSF, deleteSFAPI, updateQuestionAPI, postQuestionAPI };
