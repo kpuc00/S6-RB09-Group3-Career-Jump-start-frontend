@@ -53,7 +53,7 @@ const Login = () => {
   }
 
   return (
-    <EuiPage paddingSize="none">
+    <EuiPage paddingSize="none" style={{backgroundColor: "inherit"}}>
       <EuiPageBody paddingSize="l">
         <EuiPageContent
           verticalPosition="center"

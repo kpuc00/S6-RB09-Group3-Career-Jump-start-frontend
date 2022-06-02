@@ -12,10 +12,10 @@ function getQuestionsBySoftFactorId(id){
   })
 }
 
-function postAnswer(content, question){
+function postAnswer(answers){
   return fetch(domain + "/answers", {
     method: "POST",
-    body: JSON.stringify({content, question}),
+    body: JSON.stringify(answers),
     headers: {
       "Content-Type": "application/json",
     },
