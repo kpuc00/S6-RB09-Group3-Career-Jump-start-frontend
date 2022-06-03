@@ -31,6 +31,7 @@ import { clearUserState } from "../../features/user/userSlice";
 import { clearSoftFactorState } from "../../features/softfactor/softfactorSlice";
 
 const Login = () => {
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const loading = useSelector(selectLoading);
@@ -61,8 +62,26 @@ const Login = () => {
     }
   };
 
+  const formValid = () => {
+    let errors = {};
+    if (username === "")
+      errors = {
+        ...errors,
+        username: "Please enter your username.",
+      };
+    if (password === "")
+      errors = { ...errors, password: "Please enter your password." };
+    return errors;
+  };
+
+  const displayErrors = () => {
+    if (showValidationErrors) return formValid();
+    else return {};
+  };
+
   function submitForm() {
-    if (username !== "" && password !== "")
+    setShowValidationErrors(true);
+    if (Object.keys(formValid()).length === 0)
       dispatch(loginUser({ username, password }));
   }
 
@@ -100,16 +119,28 @@ const Login = () => {
                 id="username"
                 label="Username"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("username")}
+                error={displayErrors().username}
               >
-                <EuiFieldText name="username" fullWidth />
+                <EuiFieldText
+                  name="username"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("username")}
+                />
               </EuiFormRow>
               <EuiFormRow
                 onChange={handleChange}
                 id="password"
                 label="Password"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("password")}
+                error={displayErrors().password}
               >
-                <EuiFieldPassword name="password" fullWidth />
+                <EuiFieldPassword
+                  name="password"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("password")}
+                />
               </EuiFormRow>
               <EuiSpacer size="m" />
               <EuiButtonIcon
@@ -120,7 +151,7 @@ const Login = () => {
                 iconSize="l"
                 size="m"
                 aria-label="Login"
-                disabled={username !== "" && password !== "" ? false : true}
+                //disabled={username !== "" && password !== "" ? false : true}
               />
             </EuiForm>
             <EuiSpacer size="s" />

@@ -15,6 +15,8 @@ import {
   EuiForm,
   EuiSpacer,
   EuiFormRow,
+  EuiFlexGroup,
+  EuiFlexItem,
 } from "@elastic/eui";
 import moment from "moment";
 import {
@@ -25,8 +27,10 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 
 const RegistrationForm = () => {
+  const [showValidationErrors, setShowValidationErrors] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
   const [username, setUsername] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -60,6 +64,9 @@ const RegistrationForm = () => {
       case "password":
         setPassword(e.target.value);
         break;
+      case "repeat_password":
+        setRepeatPassword(e.target.value);
+        break;
       case "first_name":
         setFirstName(e.target.value);
         break;
@@ -74,19 +81,55 @@ const RegistrationForm = () => {
     }
   };
 
-  async function submitForm() {
-    dispatch(
-      regUser({
-        email,
-        password,
-        username,
-        firstName,
-        lastName,
-        phoneNumber,
-        dob,
-        role,
-      })
-    );
+  const formValid = () => {
+    let errors = {};
+    if (email === "")
+      errors = { ...errors, email: "Please type your E-mail address." };
+    if (password === "")
+      errors = { ...errors, password: "Please type password." };
+    if (repeatPassword === "" || repeatPassword !== password)
+      errors = {
+        ...errors,
+        repeatPassword: "Repeated password does not match with the password.",
+      };
+    if (username === "")
+      errors = {
+        ...errors,
+        username: "Please type a username. It must be unique.",
+      };
+    if (firstName === "")
+      errors = { ...errors, firstName: "What is your name?" };
+    if (lastName === "")
+      errors = { ...errors, lastName: "What is your last name?" };
+    if (phoneNumber === "")
+      errors = {
+        ...errors,
+        phoneNumber: "Add your phone number which will be used to contact you.",
+      };
+
+    return errors;
+  };
+
+  const displayErrors = () => {
+    if (showValidationErrors) return formValid();
+    else return {};
+  };
+
+  function submitForm() {
+    setShowValidationErrors(true);
+    if (Object.keys(formValid()).length === 0)
+      dispatch(
+        regUser({
+          email,
+          password,
+          username,
+          firstName,
+          lastName,
+          phoneNumber,
+          dob,
+          role,
+        })
+      );
   }
 
   return (
@@ -112,14 +155,20 @@ const RegistrationForm = () => {
                 <EuiSpacer />
               </>
             )}
-            <EuiForm component="form" style={{ textAlign: "center" }}>
+            <EuiForm component="form">
               <EuiFormRow
                 onChange={handleChange}
                 id="username"
                 label="Username"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("username")}
+                error={displayErrors().username}
               >
-                <EuiFieldText name="username" fullWidth />
+                <EuiFieldText
+                  name="username"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("username")}
+                />
               </EuiFormRow>
 
               <EuiFormRow
@@ -127,8 +176,14 @@ const RegistrationForm = () => {
                 id="first_name"
                 label="First name"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("firstName")}
+                error={displayErrors().firstName}
               >
-                <EuiFieldText name="first_name" fullWidth />
+                <EuiFieldText
+                  name="first_name"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("firstName")}
+                />
               </EuiFormRow>
 
               <EuiFormRow
@@ -136,8 +191,14 @@ const RegistrationForm = () => {
                 id="last_name"
                 label="Last name"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("lastName")}
+                error={displayErrors().lastName}
               >
-                <EuiFieldText name="last_name" fullWidth />
+                <EuiFieldText
+                  name="last_name"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("lastName")}
+                />
               </EuiFormRow>
 
               <EuiFormRow
@@ -145,8 +206,14 @@ const RegistrationForm = () => {
                 id="email"
                 label="E-mail"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("email")}
+                error={displayErrors().email}
               >
-                <EuiFieldText name="email" fullWidth />
+                <EuiFieldText
+                  name="email"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("email")}
+                />
               </EuiFormRow>
 
               <EuiFormRow
@@ -154,8 +221,14 @@ const RegistrationForm = () => {
                 id="phone_number"
                 label="Phone number"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("phoneNumber")}
+                error={displayErrors().phoneNumber}
               >
-                <EuiFieldText name="phone_number" fullWidth />
+                <EuiFieldText
+                  name="phone_number"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("phoneNumber")}
+                />
               </EuiFormRow>
 
               <EuiFormRow
@@ -180,29 +253,47 @@ const RegistrationForm = () => {
                 id="password"
                 label="Password"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("password")}
+                error={displayErrors().password}
               >
-                <EuiFieldPassword name="password" fullWidth />
+                <EuiFieldPassword
+                  name="password"
+                  type="dual"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("password")}
+                />
               </EuiFormRow>
 
               <EuiFormRow
-                //onChange={handleChange}
+                onChange={handleChange}
                 id="repeat_password"
                 label="Repeat password"
                 fullWidth
+                isInvalid={displayErrors().hasOwnProperty("repeatPassword")}
+                error={displayErrors().repeatPassword}
               >
-                <EuiFieldPassword name="repeat_password" fullWidth />
+                <EuiFieldPassword
+                  name="repeat_password"
+                  type="dual"
+                  fullWidth
+                  isInvalid={displayErrors().hasOwnProperty("repeatPassword")}
+                />
               </EuiFormRow>
 
               <EuiSpacer />
-
-              <EuiButton
-                fill
-                onClick={() => submitForm()}
-                isLoading={loading}
-                style={{ background: "#7A2C81" }}
-              >
-                Sign Up
-              </EuiButton>
+              <EuiFlexGroup justifyContent="spaceAround">
+                <EuiFlexItem grow={false}>
+                  <EuiButton
+                    fill
+                    color="primary"
+                    onClick={() => submitForm()}
+                    isLoading={loading}
+                    style={{ background: "#7A2C81" }}
+                  >
+                    Sign Up
+                  </EuiButton>
+                </EuiFlexItem>
+              </EuiFlexGroup>
             </EuiForm>
           </EuiPageContentBody>
         </EuiPageContent>
