@@ -5,15 +5,12 @@ import {
   EuiPanel,
   EuiBasicTable,
   EuiButtonIcon,
-  EuiHealth,
-  EuiSearchBar,
   EuiSpacer,
   EuiLoadingSpinner,
   EuiButton,
   EuiComboBox,
   EuiFlexGroup,
   EuiFlexItem,
-  
 } from "@elastic/eui";
 import {
   getSF,
@@ -24,9 +21,8 @@ import {
   selectQuestion,
   updateQuestion,
   addQuestion,
-  deleteQuestion,
   selectSoftFactors,
-  selectedSoftFactor
+  selectedSoftFactor,
 } from "../../features/softfactor/softfactorSlice";
 import EditModalQuestions from "./EditModalQuestions";
 
@@ -36,11 +32,9 @@ import AddModal from "./AddModal";
 const Questions = () => {
   const dispatch = useDispatch();
 
-
   useEffect(() => {
     dispatch(setAdminSelectedTabId("questions"));
     dispatch(getSF());
-
   }, [dispatch]);
 
   const softFactors = useSelector(selectSoftFactors);
@@ -48,7 +42,7 @@ const Questions = () => {
   const questions = useSelector(selectQuestions);
   const selectedQuestion = useSelector(selectSelectedQ);
   const [editModalVisible, setEditModalVisible] = useState(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  //const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
   const [updatedQuestion, setUpdatedQuestion] = useState(null);
 
@@ -58,13 +52,13 @@ const Questions = () => {
     setEditModalVisible(true);
   };
 
-  const showDeleteModal = (item) => {
-    dispatch(selectQuestion(item));
-    setDeleteModalVisible(true);
-  };
+  // const showDeleteModal = (item) => {
+  //   dispatch(selectQuestion(item));
+  //   setDeleteModalVisible(true);
+  // };
 
   const closeEditModal = () => setEditModalVisible(false);
-  const closeDeleteModal = () => setDeleteModalVisible(false);
+  //const closeDeleteModal = () => setDeleteModalVisible(false);
 
   const actions = [
     {
@@ -84,7 +78,7 @@ const Questions = () => {
         return (
           <EuiButtonIcon
             color="danger"
-            onClick={() => showDeleteModal(item)}
+            //onClick={() => showDeleteModal(item)}
             iconType="trash"
             aria-label="Remove candidate"
           />
@@ -99,17 +93,17 @@ const Questions = () => {
     },
     {
       name: "Actions",
-      actions
-    }
-  ]
+      actions,
+    },
+  ];
 
   const getLabels = (softFactors) => {
-    return softFactors.map((item) => ({ label: item.title }))
-  }
+    return softFactors.map((item) => ({ label: item.title }));
+  };
 
   function getSFId(title) {
-    let found = ""
-    softFactors.forEach(element => {
+    let found = "";
+    softFactors.forEach((element) => {
       if (element.title === title) {
         console.log("SOFT FACTOR ID VYV FUNCTION", element.id);
         found = element.id;
@@ -119,7 +113,7 @@ const Questions = () => {
   }
 
   function getQuestionContent(questions) {
-    return questions.map((item) => ({ content: item.content }))
+    return questions.map((item) => ({ content: item.content }));
   }
 
   const [selectedOptions, setSelected] = useState();
@@ -129,13 +123,12 @@ const Questions = () => {
     let id = getSFId(selectedOptions[0].label);
 
     dispatch(getQuestionsBySFId({ id }));
-
   };
 
   function getQuestionID(title) {
-    console.log(questions)
+    console.log(questions);
     let found = "";
-    questions.forEach(element => {
+    questions.forEach((element) => {
       if (element.content === title) {
         console.log("question id - ", element.id);
         found = element.id;
@@ -145,10 +138,9 @@ const Questions = () => {
   }
 
   const editQuestion = async () => {
-
     console.log("this", updatedQuestion);
 
-    let idQ = getQuestionID(selectedQuestion.content)
+    let idQ = getQuestionID(selectedQuestion.content);
     dispatch(updateQuestion({ id: idQ, updatedQuestion }));
     setUpdatedQuestion(null);
     closeEditModal();
@@ -171,22 +163,20 @@ const Questions = () => {
 
   const showAddModal = () => {
     setAddModalVisible(true);
-    console.log("show", addModalVisible)
+    console.log("show", addModalVisible);
   };
 
   const postQuestion = () => {
     console.log(sf);
-    dispatch(addQuestion({ newQuestion: updatedQuestion }))
+    dispatch(addQuestion({ newQuestion: updatedQuestion }));
     setUpdatedQuestion(null);
     closeAddModal();
-  }
+  };
 
   return (
-
     <EuiPanel hasShadow={false}>
-
       <EuiFlexGroup justifyContent="spaceBetween">
-      <EuiFlexItem  style={{minWidth: 300}} grow={false}>
+        <EuiFlexItem style={{ minWidth: 300 }} grow={false}>
           <EuiComboBox
             placeholder="Select soft factor"
             options={getLabels(softFactors)}
@@ -195,14 +185,17 @@ const Questions = () => {
             onChange={onChange}
           />
         </EuiFlexItem>
-        <EuiFlexItem grow={false} style={{maxWidth: 150}}>
-          <EuiButton isDisabled={true} onClick={() => showAddModal()}>Add Soft factor</EuiButton>
-          {addModalVisible &&
+        <EuiFlexItem grow={false} style={{ maxWidth: 150 }}>
+          <EuiButton isDisabled={true} onClick={() => showAddModal()}>
+            Add Question
+          </EuiButton>
+          {addModalVisible && (
             <AddModal
               onClose={closeAddModal}
               onConfirm={postQuestion}
               handleUpdate={handleUpdate}
-            />}
+            />
+          )}
         </EuiFlexItem>
       </EuiFlexGroup>
 

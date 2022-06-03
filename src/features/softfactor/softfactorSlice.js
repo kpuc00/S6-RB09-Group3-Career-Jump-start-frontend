@@ -1,15 +1,29 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { getSoftFactors, getQuestionsBySoftFactorId, postAnswer, updateSoftFactor, postSF, deleteSFAPI, updateQuestionAPI, postQuestionAPI } from "./softfactorAPI";
+import {
+  getSoftFactors,
+  getQuestionsBySoftFactorId,
+  postAnswer,
+  updateSoftFactor,
+  postSF,
+  deleteSFAPI,
+  updateQuestionAPI,
+  postQuestionAPI,
+  getAnswersbyUsername,
+} from "./softfactorAPI";
 
 const initialState = {
   loading: false,
+  answersLoading: false,
   processing: false,
   softFactors: [],
   questions: [],
-  message: "",
+  answers: [],
   selectedSoftFactor: null,
-  selectedQuestion:null,
-  softFactor: ""
+  selectedQuestion: null,
+  softFactor: "",
+  questionsAnswered: false,
+  message: null,
+  error: null,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -17,42 +31,36 @@ const initialState = {
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
+export const addSF = createAsyncThunk("softfactor/postSF", async (params) => {
+  const response = await postSF(params.newSoftFactor);
+  const data = await response.json();
+  return data;
+});
+
 export const getSF = createAsyncThunk(
   "softfactor/getSoftFactors",
   async (thunkAPI) => {
     const response = await getSoftFactors();
-    const data = await response.json();
-    return data;
+    return await response.json();
   }
 );
 
 export const updateSF = createAsyncThunk(
   "softFactor/update",
   async (params) => {
-    const response = await updateSoftFactor(params.id, params.updatedSoftFactor);
+    const response = await updateSoftFactor(
+      params.id,
+      params.updatedSoftFactor
+    );
     const text = await response.text();
     // // The value we return becomes the `fulfilled` action payload
-    if (response.ok) return { text, updatedSoftFactor: {id: params.id, ...params.updatedSoftFactor} };
+    if (response.ok)
+      return {
+        text,
+        updatedSoftFactor: { id: params.id, ...params.updatedSoftFactor },
+      };
   }
 );
-
-export const answerPost = createAsyncThunk(
-  "softfactor/answerPost",
-  async (params, thunkAPI) => {
-    const response = await postAnswer(params.content, params.question);
-    const data = await response.json();
-    return data;
-  }
-)
-
-export const addSF = createAsyncThunk(
-  "softfactor/postSF",
-  async (params) => {
-    const response = await postSF(params.newSoftFactor);
-    const data = await response.json();
-    return data;
-  }
-)
 
 export const deleteSF = createAsyncThunk(
   "softfactor/delete",
@@ -62,36 +70,55 @@ export const deleteSF = createAsyncThunk(
     const text = await response.json();
     if (response.ok) return { text };
   }
-)
+);
+
+export const answerPost = createAsyncThunk(
+  "softfactor/answerPost",
+  async (params, thunkAPI) => {
+    const response = await postAnswer(params.answers);
+    const json = await response.json();
+    return { status: response.status, ...json };
+  }
+);
+
+export const addQuestion = createAsyncThunk("question/post", async (params) => {
+  const response = await postQuestionAPI(params.newQuestion);
+  const data = await response.json();
+  return data;
+});
 
 export const getQuestionsBySFId = createAsyncThunk(
   "softfactor/getQuestionsBySoftFactorId",
-  async (params) => {
+  async (params, thunkAPI) => {
     const response = await getQuestionsBySoftFactorId(params.id);
-    const data = await response.json();
-    return data;
+    return await response.json();
   }
-)
+);
 
 export const updateQuestion = createAsyncThunk(
   "questions/update",
   async (params) => {
-    console.log("params",params)
+    console.log("params", params);
     const response = await updateQuestionAPI(params.id, params.updatedQuestion);
     const text = await response.text();
     // // The value we return becomes the `fulfilled` action payload
-    if (response.ok) return { text, updatedQuestion: {id: params.id, ...params.updatedQuestion} };
+    if (response.ok)
+      return {
+        text,
+        updatedQuestion: { id: params.id, ...params.updatedQuestion },
+      };
   }
 );
 
-export const addQuestion = createAsyncThunk(
-  "question/post",
-    async (params) => {
-      const response = await postQuestionAPI(params.newQuestion);
-      const data = await response.json();
-      return data;
-    }
-)
+export const getSFAnswersByUsername = createAsyncThunk(
+  "softfactor/getSFAnswersByUsername",
+  async (username, thunkAPI) => {
+    const response = await getAnswersbyUsername(username);
+    const json = await response.json();
+    return { status: response.status, ...json };
+  }
+);
+
 export const softfactorSlice = createSlice({
   name: "softfactor",
   initialState,
@@ -101,11 +128,32 @@ export const softfactorSlice = createSlice({
     },
     selectQuestion(state, action) {
       state.selectedQuestion = action.payload;
-    }
+    },
+    clearSoftFactorState(state) {
+      state.loading = false;
+      state.softFactors = [];
+      state.questions = [];
+      state.answers = [];
+      state.answersLoading = false;
+      state.questionsAnswered = false;
+    },
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
   // including actions generated by createAsyncThunk or in other slices.
   extraReducers: (builder) => {
+    builder
+      .addCase(addSF.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(addSF.fulfilled, (state, action) => {
+        state.loading = false;
+        if (action.payload.status) state.loading = false;
+        else {
+          state.message = action.payload.message;
+          state.softFactors = [...state.softFactors, action.payload.item];
+          state.loading = false;
+        }
+      });
     builder
       .addCase(getSF.pending, (state) => {
         state.loading = true;
@@ -114,34 +162,16 @@ export const softfactorSlice = createSlice({
         state.loading = false;
         if (action.payload.status) state.loading = false;
         else {
-          state.softFactors = action.payload.item
-          state.loading = false
-        }
-      });
-    builder
-      .addCase(getQuestionsBySFId.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(getQuestionsBySFId.fulfilled, (state, action) => {
-        state.loading = false;
-        if (action.payload.status) state.loading = false;
-        else {
-          state.questions = action.payload.item
-          state.loading = false
-        }
-      })
-    builder
-      .addCase(answerPost.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(answerPost.fulfilled, (state, action) => {
-        state.loading = false
-        if (action.payload.status) state.loading = false;
-        else {
-          state.message = action.payload.message
+          state.softFactors = action.payload.item;
           state.loading = false;
         }
+        state.softFactors = action.payload.item;
+        state.loading = false;
       })
+      .addCase(getSF.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
+      });
     builder
       .addCase(updateSF.pending, (state) => {
         state.processing = true;
@@ -164,22 +194,46 @@ export const softfactorSlice = createSlice({
         state.selectedSoftFactor = null;
       });
     builder
-      .addCase(addSF.pending, (state) => {
+      .addCase(answerPost.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
       })
-      .addCase(addSF.fulfilled, (state, action) => {
-        state.loading = false
+      .addCase(answerPost.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.loading = false;
+        if (action.payload.status === 200) {
+          state.questionsAnswered = true;
+          state.message = action.payload.message;
+          state.loading = false;
+        } else {
+          state.error = action.payload.message;
+        }
+      })
+      .addCase(answerPost.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
+      });
+    builder
+      .addCase(getQuestionsBySFId.pending, (state) => {
+        state.loading = true;
+        state.message = null;
+      })
+      .addCase(getQuestionsBySFId.fulfilled, (state, action) => {
+        state.loading = false;
         if (action.payload.status) state.loading = false;
         else {
-          state.message = action.payload.message
-          state.softFactors = [
-            ...state.softFactors,
-            action.payload.item
-          ];
+          state.questions = action.payload.item;
+          state.message = action.payload.message;
           state.loading = false;
         }
       })
-      builder
+      .addCase(getQuestionsBySFId.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
+      });
+
+    builder
       .addCase(updateQuestion.pending, (state) => {
         state.processing = true;
       })
@@ -200,26 +254,37 @@ export const softfactorSlice = createSlice({
         state.processing = false;
         state.selectedSoftFactor = null;
       });
+
+    builder
+      .addCase(getSFAnswersByUsername.pending, (state) => {})
+      .addCase(getSFAnswersByUsername.fulfilled, (state, action) => {
+        if (action.payload.status === 200) {
+          state.answers = action.payload.item;
+        } else {
+        }
+      });
   },
 });
 
 // Action creators are generated for each case reducer function
+export const { clearSoftFactorState, selectedSoftFactor, selectQuestion } =
+  softfactorSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-
-export const { selectedSoftFactor, selectQuestion } = softfactorSlice.actions;
-
-export const selectSoftFactors = (state) => state.softfactor.softFactors;
-export const postMessage = (state) => state.softfactor.message;
-
 export const selectLoading = (state) => state.softfactor.loading;
-
 export const selectSelectedSF = (state) => state.softfactor.selectedSoftFactor;
 export const selectSFProcessing = (state) => state.softfactor.processing;
-
-export const selectQuestions = (state) => state.softfactor.questions;
 export const selectSelectedQ = (state) => state.softfactor.selectedQuestion;
+export const selectSoftFactors = (state) => state.softfactor.softFactors;
+export const selectQuestions = (state) => state.softfactor.questions;
+export const selectQuestionsAnswered = (state) =>
+  state.softfactor.questionsAnswered;
+export const selectMessage = (state) => state.softfactor.message;
+export const selectError = (state) => state.softfactor.error;
+export const postMessage = (state) => state.softfactor.message;
+export const selectAnswersLoading = (state) => state.softfactor.answersLoading;
+export const selectAnswers = (state) => state.softfactor.answers;
 
 export default softfactorSlice.reducer;

@@ -1,5 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { delUser, fetchCandidates, fetchCompanies, updUser } from "./userAPI";
+import {
+  delUser,
+  fetchCandidates,
+  fetchCompanies,
+  setAnsweredQuestionnaire,
+  updUser,
+} from "./userAPI";
 
 const initialState = {
   loading: false,
@@ -9,6 +15,7 @@ const initialState = {
   error: null,
   candidates: [],
   companies: [],
+  questionnaireAnsweredSet: false,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -50,10 +57,27 @@ export const deleteUser = createAsyncThunk("user/deleteUser", async (id) => {
   if (response.ok) return text;
 });
 
+export const setQuestionnaireAnswered = createAsyncThunk(
+  "user/setQuestionnaireAnswered",
+  async (username) => {
+    const response = await setAnsweredQuestionnaire(username);
+    const text = await response.text();
+    if (response.ok) return text;
+  }
+);
+
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    clearUserState(state) {
+      state.loading = false;
+      state.processing = false;
+      state.selectedUser = null;
+      state.candidates = [];
+      state.companies = [];
+      state.questionnaireAnsweredSet = false;
+    },
     userLoading(state) {
       if (!state.loading) state.loading = true;
     },
@@ -125,7 +149,7 @@ export const userSlice = createSlice({
         state.processing = true;
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
-        if (action.payload.status) state.loading = false;
+        if (action.payload.status) state.processing = false;
         else {
           state.candidates = [
             ...state.candidates.filter((item) => {
@@ -141,11 +165,18 @@ export const userSlice = createSlice({
           state.selectedUser = null;
         }
       });
+    builder.addCase(setQuestionnaireAnswered.fulfilled, (state, action) => {
+      state.loading = false;
+      if (action.payload.status) {
+      } else {
+        state.questionnaireAnsweredSet = true;
+      }
+    });
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { userLoading, selectUser } = userSlice.actions;
+export const { clearUserState, userLoading, selectUser } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -157,5 +188,7 @@ export const selectCompanies = (state) => state.user.companies;
 export const selectMessage = (state) => state.user.message;
 export const selectError = (state) => state.user.error;
 export const selectSelectedUser = (state) => state.user.selectedUser;
+export const selectQuestionnaireAnsweredSet = (state) =>
+  state.user.questionnaireAnsweredSet;
 
 export default userSlice.reducer;

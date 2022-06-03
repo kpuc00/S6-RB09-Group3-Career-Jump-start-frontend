@@ -1,9 +1,9 @@
 const domain = "http://localhost:8080/";
 
-function login(email, password) {
-  return fetch(domain + "api/auth/signin", {
+function login(username, password) {
+  return fetch(domain + "auth/signin", {
     method: "POST",
-    body: JSON.stringify({ username: email, password }),
+    body: JSON.stringify({ username, password }),
     headers: {
       "Content-Type": "application/json",
     },
@@ -12,8 +12,7 @@ function login(email, password) {
 }
 
 function logout() {
-  console.log("pesho");
-  return fetch(domain + "api/auth/signout", {
+  return fetch(domain + "auth/signout", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,28 +21,31 @@ function logout() {
   });
 }
 
-function testUser() {
-  return fetch(domain + "api/test/user", {
-    method: "GET",
-    credentials: "include",
-  });
-}
-
-function testAdmin() {
-  return fetch(domain + "api/test/admin", {
-    method: "GET",
-    credentials: "include",
-  });
-}
-
-function register(email, username, password, role) {
-  console.log({ email, username, password, role });
-  return fetch(domain + "api/auth/signup", {
+function register(
+  username,
+  firstName,
+  lastName,
+  phoneNumber,
+  dob,
+  email,
+  password,
+  role
+) {
+  return fetch(domain + "auth/signup", {
     method: "POST",
-    body: JSON.stringify({ email, username, password, role }),
+    body: JSON.stringify({
+      username,
+      firstName,
+      lastName,
+      phoneNumber,
+      dob,
+      email,
+      password,
+      role,
+    }),
     headers: {
       "Content-Type": "application/json",
     },
   });
 }
-export { register, login, logout, testUser, testAdmin };
+export { register, login, logout };
