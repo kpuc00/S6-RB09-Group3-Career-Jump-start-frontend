@@ -12,26 +12,11 @@ function login(username, password) {
 }
 
 function logout() {
-  console.log("pesho");
   return fetch(domain + "auth/signout", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include",
-  });
-}
-
-function testUser() {
-  return fetch(domain + "test/user", {
-    method: "GET",
-    credentials: "include",
-  });
-}
-
-function testAdmin() {
-  return fetch(domain + "test/admin", {
-    method: "GET",
     credentials: "include",
   });
 }
@@ -63,4 +48,4 @@ function register(
     },
   });
 }
-export { register, login, logout, testUser, testAdmin };
+export { register, login, logout };

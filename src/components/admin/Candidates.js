@@ -100,9 +100,9 @@ const Candidates = () => {
       dataType: "boolean",
       render: (status) => {
         const color =
-          status === "assigned"
+          status === "ASSIGNED"
             ? "success"
-            : status === "waiting"
+            : status === "PENDING"
             ? "warning"
             : "danger";
         const label = status || "unknown";
