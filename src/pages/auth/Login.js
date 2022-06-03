@@ -77,17 +77,13 @@ const Login = () => {
           <EuiSpacer size="m" />
           {error && (
             <>
-              <EuiCallOut
-                color="danger"
-                iconType="alert"
-                title={error.message}
-              />
+              <EuiCallOut color="danger" iconType="alert" title={error} />
               <EuiSpacer />
             </>
           )}
           {message && (
             <>
-              <EuiCallOut title={message.message} />
+              <EuiCallOut title={message} />
               <EuiSpacer />
             </>
           )}

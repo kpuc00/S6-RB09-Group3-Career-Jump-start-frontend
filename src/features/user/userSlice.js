@@ -11,8 +11,6 @@ const initialState = {
   loading: false,
   processing: false,
   selectedUser: null,
-  message: null,
-  error: null,
   candidates: [],
   companies: [],
   questionnaireAnsweredSet: false,

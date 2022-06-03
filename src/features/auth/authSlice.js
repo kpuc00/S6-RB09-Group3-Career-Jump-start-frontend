@@ -95,7 +95,7 @@ export const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         if (action.payload.status) {
           state.loading = false;
-          state.error = action.payload;
+          state.error = action.payload.error;
         } else {
           state.user = action.payload;
           const role = action.payload.roles[0];
@@ -138,9 +138,9 @@ export const authSlice = createSlice({
         state.loading = false;
         if (action.payload.status === 200) {
           state.registered = true;
-          state.message = { message: action.payload.message };
+          state.message = action.payload.message;
         } else {
-          state.error = { message: action.payload.error };
+          state.error = action.payload.error;
         }
       })
       .addCase(regUser.rejected, (state) => {
@@ -161,7 +161,7 @@ export const authSlice = createSlice({
         state.isCandidate = false;
         state.isMatcher = false;
         state.isAdmin = false;
-        state.message = action.payload;
+        state.message = action.payload.message;
         state.loading = false;
       })
       .addCase(logoutUser.rejected, (state) => {

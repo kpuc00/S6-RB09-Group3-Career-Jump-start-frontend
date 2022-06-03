@@ -86,7 +86,7 @@ function RegistrationForm() {
       <form className={styles.container}>
         {error && (
           <>
-            <EuiCallOut color="danger" iconType="alert" title={error.message} />
+            <EuiCallOut color="danger" iconType="alert" title={error} />
             {/* <EuiSpacer /> */}
           </>
         )}
