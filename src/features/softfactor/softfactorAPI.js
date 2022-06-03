@@ -6,16 +6,11 @@ function getSoftFactors() {
   });
 }
 
-function getQuestionsBySoftFactorId(id) {
-  return fetch(domain + "/question/?softFactorId=" + id, {
-    method: "GET",
-  });
-}
-
-function postAnswer(answers) {
-  return fetch(domain + "/answers", {
-    method: "POST",
-    body: JSON.stringify(answers),
+function updateSoftFactor(id, sf) {
+  //console.log(JSON.stringify({sf}));
+  return fetch(domain + "/softfactor/" + id, {
+    method: "PUT",
+    body: JSON.stringify(sf),
     headers: {
       "Content-Type": "application/json",
     },
@@ -23,16 +18,62 @@ function postAnswer(answers) {
   });
 }
 
-function getAnswersbyUsername(username) {
-  return fetch(domain + "/answers?username=" + username, {
+function getQuestionsBySoftFactorId(id){
+  return fetch(domain + "/question/?softFactorId=" + id, {
     method: "GET",
+  })
+}
+
+function postAnswer(content, question){
+  return fetch(domain + "/answers", {
+    method: "POST",
+    body: JSON.stringify({content, question}),
+    headers: {
+      "Content-Type": "application/json",
+    },
     credentials: "include",
   });
 }
 
-export {
-  getSoftFactors,
-  getQuestionsBySoftFactorId,
-  postAnswer,
-  getAnswersbyUsername,
-};
+function postSF(softFactor) {
+  return fetch(domain + "/softfactor", {
+    method: "POST",
+    body: JSON.stringify(softFactor),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+
+function deleteSFAPI(id) {
+  return fetch(domain + "/softfactor" + `/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+}
+
+function updateQuestionAPI(id, question){
+  console.log("id", id);
+  console.log("passed question", JSON.stringify(question));
+  return fetch(domain + "/question/" + id, {
+    method: "PUT",
+    body: JSON.stringify(question),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+
+function postQuestionAPI(question) {
+  return fetch(domain + "/question", {
+    method: "POST",
+    body: JSON.stringify(question),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+}
+export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer, updateSoftFactor, postSF, deleteSFAPI, updateQuestionAPI, postQuestionAPI };

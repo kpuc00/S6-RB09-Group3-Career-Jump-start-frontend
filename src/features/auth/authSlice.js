@@ -26,7 +26,7 @@ const initialState = {
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (params, thunkAPI) => {
-    const response = await login(params.username, params.password);
+    const response = await login(params.email, params.password);
     // The value we return becomes the `fulfilled` action payload
     return await response.json();
   }
@@ -36,17 +36,12 @@ export const regUser = createAsyncThunk(
   "auth/regUser",
   async (params, thunkAPI) => {
     const response = await register(
-      params.username,
-      params.firstName,
-      params.lastName,
-      params.phoneNumber,
-      params.dob,
       params.email,
+      params.username,
       params.password,
       params.role
     );
-    const json = await response.json();
-    return { status: response.status, ...json };
+    return await response.json();
   }
 );
 
@@ -120,32 +115,30 @@ export const authSlice = createSlice({
             path: "/",
             maxAge: 24 * 60 * 60,
           });
+          localStorage.setItem("showLogoutPage", "true");
           state.loading = false;
         }
-      })
-      .addCase(loginUser.rejected, (state) => {
-        state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(regUser.pending, (state) => {
         state.loading = true;
-        state.error = null;
-        state.message = null;
-        state.registered = false;
       })
       .addCase(regUser.fulfilled, (state, action) => {
         state.loading = false;
-        if (action.payload.status === 200) {
-          state.registered = true;
-          state.message = { message: action.payload.message };
-        } else {
-          state.error = { message: action.payload.error };
+        if (action.payload.status) state.loading = false;
+        else {
+          state.user = action.payload;
+          cookie.save("user", action.payload, {
+            path: "/",
+            maxAge: 24 * 60 * 60,
+          });
+          state.register = true;
         }
       })
-      .addCase(regUser.rejected, (state) => {
+      .addCase(regUser.rejected, (state, action) => {
+        console.log("rejected");
+        console.log(action.payload);
         state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(logoutUser.pending, (state) => {
@@ -163,10 +156,6 @@ export const authSlice = createSlice({
         state.isAdmin = false;
         state.message = action.payload;
         state.loading = false;
-      })
-      .addCase(logoutUser.rejected, (state) => {
-        state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
       });
   },
 });

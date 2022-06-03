@@ -1,6 +1,6 @@
 import NotFound from "./NotFound";
 import Home from "./Home";
-import ProfilePage from "./ProfilePage";
+import Page from "./Page";
 import Login from "./auth/Login";
 import Admin from "./Admin";
 import CandidateRegistration from "./auth/candidate-registration";
@@ -9,7 +9,7 @@ import Questionnaire from "./Questionnaire.js";
 export {
   NotFound,
   Home,
-  ProfilePage,
+  Page,
   Login,
   CandidateRegistration,
   Register,

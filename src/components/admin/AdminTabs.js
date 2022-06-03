@@ -38,7 +38,6 @@ const AdminTabs = () => {
           disabled={tab.disabled}
           prepend={tab.prepend}
           append={tab.append}
-          style={{paddingInline: 10}}
         >
           {tab.name}
         </EuiTab>
@@ -48,7 +47,7 @@ const AdminTabs = () => {
 
   return (
     <>
-      <EuiTabs style={{ justifyContent: "center" }} size="l">{renderTabs()}</EuiTabs>
+      <EuiTabs style={{ justifyContent: "center" }}>{renderTabs()}</EuiTabs>
       <Outlet />
     </>
   );

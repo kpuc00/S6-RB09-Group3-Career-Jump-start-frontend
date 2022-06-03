@@ -1,16 +1,16 @@
-.questions {
-  text-align: left;
+.questions{
+    text-align: left;
 }
-.table {
-  border-color: #c6b0e0;
-  border-style: none none solid none;
-  vertical-align: middle;
+.container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 60vh;
 }
-
-.table td {
-  padding: 10px 5px;
-}
-
-.tabletop thead tr th {
-  padding: 10px 0;
-}
+.table{
+    border:1px solid black;
+    border-style: none solid solid none;
+    vertical-align: middle;
+  }
