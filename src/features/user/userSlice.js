@@ -70,6 +70,14 @@ export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+    clearUserState(state) {
+      state.loading = false;
+      state.processing = false;
+      state.selectedUser = null;
+      state.candidates = [];
+      state.companies = [];
+      state.questionnaireAnsweredSet = false;
+    },
     userLoading(state) {
       if (!state.loading) state.loading = true;
     },
@@ -168,7 +176,7 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { userLoading, selectUser } = userSlice.actions;
+export const { clearUserState, userLoading, selectUser } = userSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

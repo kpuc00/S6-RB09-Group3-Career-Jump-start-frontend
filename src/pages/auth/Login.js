@@ -15,12 +15,16 @@ import {
   EuiCallOut,
 } from "@elastic/eui";
 import {
+  clearAuthState,
   loginUser,
   selectError,
   selectLoading,
   selectMessage,
+  selectUserLoggedOut,
   setRegisteredState,
 } from "../../features/auth/authSlice";
+import { clearUserState } from "../../features/user/userSlice";
+import { clearSoftFactorState } from "../../features/softfactor/softfactorSlice";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -29,10 +33,16 @@ const Login = () => {
   const dispatch = useDispatch();
   const error = useSelector(selectError);
   const message = useSelector(selectMessage);
+  const userLoggedOut = useSelector(selectUserLoggedOut);
 
   useEffect(() => {
     dispatch(setRegisteredState(false));
-  }, [dispatch]);
+    if (userLoggedOut) {
+      dispatch(clearAuthState());
+      dispatch(clearUserState());
+      dispatch(clearSoftFactorState());
+    }
+  }, [dispatch, userLoggedOut]);
 
   const handleChange = (e) => {
     switch (e.target.id) {
@@ -53,7 +63,7 @@ const Login = () => {
   }
 
   return (
-    <EuiPage paddingSize="none" style={{backgroundColor: "inherit"}}>
+    <EuiPage paddingSize="none" style={{ backgroundColor: "inherit" }}>
       <EuiPageBody paddingSize="l">
         <EuiPageContent
           verticalPosition="center"

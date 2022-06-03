@@ -10,6 +10,7 @@ const initialState = {
   message: null,
   error: null,
   registered: false,
+  userLoggedOut: false,
   user: userCookie,
   isCompany: roles ? roles.includes("ROLE_COMPANY") : false,
   isCandidate: roles ? roles.includes("ROLE_CANDIDATE") : false,
@@ -62,6 +63,16 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    clearAuthState(state) {
+      state.loading = false;
+      state.registered = false;
+      state.userLoggedOut = false;
+      state.user = null;
+      state.isCompany = false;
+      state.isCandidate = false;
+      state.isMatcher = false;
+      state.isAdmin = false;
+    },
     updateUser(state, action) {
       state.user = action.payload;
     },
@@ -145,6 +156,7 @@ export const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state, action) => {
         cookie.remove("user");
         state.user = null;
+        state.userLoggedOut = true;
         state.isCompany = false;
         state.isCandidate = false;
         state.isMatcher = false;
@@ -159,7 +171,7 @@ export const authSlice = createSlice({
   },
 });
 
-export const { updateUser, setRegisteredState, setErrorState } =
+export const { clearAuthState, updateUser, setRegisteredState, setErrorState } =
   authSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
@@ -174,5 +186,6 @@ export const selectIsAdmin = (state) => state.auth.isAdmin;
 export const selectMessage = (state) => state.auth.message;
 export const selectError = (state) => state.auth.error;
 export const selectIsRegistered = (state) => state.auth.registered;
+export const selectUserLoggedOut = (state) => state.auth.userLoggedOut;
 
 export default authSlice.reducer;
