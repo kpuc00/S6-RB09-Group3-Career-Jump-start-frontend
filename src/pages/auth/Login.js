@@ -91,7 +91,7 @@ const Login = () => {
         <EuiPageContent
           verticalPosition="center"
           horizontalPosition="center"
-          style={{ minWidth: "60%" }}
+          style={{ minWidth: "30%" }}
         >
           <EuiPageContentHeader style={{ justifyContent: "center" }}>
             <EuiPageContentHeaderSection>
