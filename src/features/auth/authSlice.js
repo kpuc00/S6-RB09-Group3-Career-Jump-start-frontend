@@ -154,14 +154,14 @@ export const authSlice = createSlice({
         state.message = null;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
-        cookie.remove("user");
         state.user = null;
-        state.userLoggedOut = true;
+        cookie.remove("user");
         state.isCompany = false;
         state.isCandidate = false;
         state.isMatcher = false;
         state.isAdmin = false;
         state.message = action.payload.message;
+        state.userLoggedOut = true;
         state.loading = false;
       })
       .addCase(logoutUser.rejected, (state) => {

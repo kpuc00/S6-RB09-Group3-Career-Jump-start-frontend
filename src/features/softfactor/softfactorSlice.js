@@ -256,12 +256,21 @@ export const softfactorSlice = createSlice({
       });
 
     builder
-      .addCase(getSFAnswersByUsername.pending, (state) => {})
+      .addCase(getSFAnswersByUsername.pending, (state) => {
+        state.answersLoading = true;
+        state.error = null;
+      })
       .addCase(getSFAnswersByUsername.fulfilled, (state, action) => {
+        state.answersLoading = false;
         if (action.payload.status === 200) {
           state.answers = action.payload.item;
         } else {
+          state.error = action.payload.message;
         }
+      })
+      .addCase(getSFAnswersByUsername.rejected, (state) => {
+        state.answersLoading = false;
+        state.error = "Something went wrong! Please try again later.";
       });
   },
 });

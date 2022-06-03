@@ -5,6 +5,9 @@ import {
   EuiPage,
   EuiPageBody,
   EuiPageContent,
+  EuiPageContentHeader,
+  EuiPageContentHeaderSection,
+  EuiTitle,
   EuiText,
   EuiForm,
   EuiFormRow,
@@ -13,6 +16,7 @@ import {
   EuiFieldPassword,
   EuiSpacer,
   EuiCallOut,
+  EuiPageContentBody,
 } from "@elastic/eui";
 import {
   clearAuthState,
@@ -63,57 +67,64 @@ const Login = () => {
   }
 
   return (
-    <EuiPage paddingSize="none" style={{ backgroundColor: "inherit" }}>
-      <EuiPageBody paddingSize="l">
-        <EuiPageContent
-          verticalPosition="center"
-          horizontalPosition="center"
-          paddingSize="none"
-          color="transparent"
-        >
-          <EuiText textAlign="center">
-            <h1>Login</h1>
-          </EuiText>
-          <EuiSpacer size="m" />
-          {error && (
-            <>
-              <EuiCallOut color="danger" iconType="alert" title={error} />
-              <EuiSpacer />
-            </>
-          )}
-          {message && (
-            <>
-              <EuiCallOut title={message} />
-              <EuiSpacer />
-            </>
-          )}
-
-          <EuiForm component="form">
-            <EuiFormRow onChange={handleChange} id="username" label="Username">
-              <EuiFieldText name="username" />
-            </EuiFormRow>
-            <EuiFormRow onChange={handleChange} id="password" label="Password">
-              <EuiFieldPassword name="password" />
-            </EuiFormRow>
-            <EuiSpacer size="m" />
-            <EuiButtonIcon
-              onClick={() => submitForm()}
-              isLoading={loading}
-              display="base"
-              iconType="push"
-              iconSize="l"
-              size="m"
-              aria-label="Login"
-              disabled={username !== "" && password !== "" ? false : true}
-            />
-          </EuiForm>
-          <EuiSpacer size="s" />
-          <EuiText textAlign="center">
-            <span>Not registered?</span>{" "}
-            <Link to="/register">
-              <span>Register</span>
-            </Link>
-          </EuiText>
+    <EuiPage>
+      <EuiPageBody component="div">
+        <EuiPageContent verticalPosition="center" horizontalPosition="center">
+          <EuiPageContentHeader style={{ justifyContent: "center" }}>
+            <EuiPageContentHeaderSection>
+              <EuiTitle>
+                <h2>Login</h2>
+              </EuiTitle>
+            </EuiPageContentHeaderSection>
+          </EuiPageContentHeader>
+          <EuiPageContentBody>
+            {error && (
+              <>
+                <EuiCallOut color="danger" iconType="alert" title={error} />
+                <EuiSpacer />
+              </>
+            )}
+            {message && (
+              <>
+                <EuiCallOut title={message} />
+                <EuiSpacer />
+              </>
+            )}
+            <EuiForm component="form">
+              <EuiFormRow
+                onChange={handleChange}
+                id="username"
+                label="Username"
+              >
+                <EuiFieldText name="username" />
+              </EuiFormRow>
+              <EuiFormRow
+                onChange={handleChange}
+                id="password"
+                label="Password"
+              >
+                <EuiFieldPassword name="password" />
+              </EuiFormRow>
+              <EuiSpacer size="m" />
+              <EuiButtonIcon
+                onClick={() => submitForm()}
+                isLoading={loading}
+                display="base"
+                iconType="push"
+                iconSize="l"
+                size="m"
+                aria-label="Login"
+                disabled={username !== "" && password !== "" ? false : true}
+              />
+            </EuiForm>
+            <EuiSpacer size="s" />
+            <EuiText textAlign="center">
+              <span>Not registered?</span>{" "}
+              <Link to="/register">
+                <span>Register</span>
+              </Link>
+            </EuiText>
+          </EuiPageContentBody>
         </EuiPageContent>
       </EuiPageBody>
     </EuiPage>
