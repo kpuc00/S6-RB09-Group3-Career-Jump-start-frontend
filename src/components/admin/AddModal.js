@@ -18,7 +18,7 @@ import {
       <EuiModal onClose={onClose}>
         <EuiModalHeader>
           <EuiModalHeaderTitle>
-            <h1>Add new Soft Factor</h1>
+            <h1>Add new</h1>
           </EuiModalHeaderTitle>
         </EuiModalHeader>
   

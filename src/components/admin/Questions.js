@@ -11,6 +11,9 @@ import {
   EuiLoadingSpinner,
   EuiButton,
   EuiComboBox,
+  EuiFlexGroup,
+  EuiFlexItem,
+  
 } from "@elastic/eui";
 import {
   getSF,
@@ -22,7 +25,8 @@ import {
   updateQuestion,
   addQuestion,
   deleteQuestion,
-  selectSoftFactors
+  selectSoftFactors,
+  selectedSoftFactor
 } from "../../features/softfactor/softfactorSlice";
 import EditModalQuestions from "./EditModalQuestions";
 
@@ -45,7 +49,7 @@ const Questions = () => {
   const selectedQuestion = useSelector(selectSelectedQ);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
- 
+
   const [updatedQuestion, setUpdatedQuestion] = useState(null);
 
   const showEditModal = (item) => {
@@ -125,7 +129,7 @@ const Questions = () => {
     let id = getSFId(selectedOptions[0].label);
 
     dispatch(getQuestionsBySFId({ id }));
-    
+
   };
 
   function getQuestionID(title) {
@@ -141,11 +145,11 @@ const Questions = () => {
   }
 
   const editQuestion = async () => {
-    
+
     console.log("this", updatedQuestion);
-   
+
     let idQ = getQuestionID(selectedQuestion.content)
-    dispatch(updateQuestion({ id: idQ, updatedQuestion,  }));
+    dispatch(updateQuestion({ id: idQ, updatedQuestion }));
     setUpdatedQuestion(null);
     closeEditModal();
   };
@@ -159,6 +163,8 @@ const Questions = () => {
     });
   };
 
+  const sf = useSelector(selectedSoftFactor);
+
   const [addModalVisible, setAddModalVisible] = useState(false);
 
   const closeAddModal = () => setAddModalVisible(false);
@@ -169,6 +175,7 @@ const Questions = () => {
   };
 
   const postQuestion = () => {
+    console.log(sf);
     dispatch(addQuestion({ newQuestion: updatedQuestion }))
     setUpdatedQuestion(null);
     closeAddModal();
@@ -178,21 +185,26 @@ const Questions = () => {
 
     <EuiPanel hasShadow={false}>
 
-      <EuiButton onClick={() => showAddModal()}>Add Soft factor</EuiButton>
-      {addModalVisible &&
-      <AddModal
-        onClose={closeAddModal}
-        onConfirm={postQuestion}
-        handleUpdate={handleUpdate}
-      />}
-
-      <EuiComboBox
-        placeholder="Select soft factor"
-        options={getLabels(softFactors)}
-        selectedOptions={selectedOptions}
-        singleSelection={{ asPlainText: true }}
-        onChange={onChange}
-      />
+      <EuiFlexGroup justifyContent="spaceBetween">
+      <EuiFlexItem  style={{minWidth: 300}} grow={false}>
+          <EuiComboBox
+            placeholder="Select soft factor"
+            options={getLabels(softFactors)}
+            selectedOptions={selectedOptions}
+            singleSelection={{ asPlainText: true }}
+            onChange={onChange}
+          />
+        </EuiFlexItem>
+        <EuiFlexItem grow={false} style={{maxWidth: 150}}>
+          <EuiButton isDisabled={true} onClick={() => showAddModal()}>Add Soft factor</EuiButton>
+          {addModalVisible &&
+            <AddModal
+              onClose={closeAddModal}
+              onConfirm={postQuestion}
+              handleUpdate={handleUpdate}
+            />}
+        </EuiFlexItem>
+      </EuiFlexGroup>
 
       <EuiSpacer />
       {questionsLoading ? (

@@ -179,6 +179,27 @@ export const softfactorSlice = createSlice({
           state.loading = false;
         }
       })
+      builder
+      .addCase(updateQuestion.pending, (state) => {
+        state.processing = true;
+      })
+      .addCase(updateQuestion.fulfilled, (state, action) => {
+        state.questions = [
+          ...state.questions.map((item) => {
+            if (item.id !== action.payload.updatedQuestion.id) {
+              // This isn't the item we care about - keep it as-is
+              return item;
+            }
+            // Otherwise, this is the one we want - return an updated value
+            return {
+              ...item,
+              ...action.payload.updatedQuestion,
+            };
+          }),
+        ];
+        state.processing = false;
+        state.selectedSoftFactor = null;
+      });
   },
 });
 
