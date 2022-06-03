@@ -21,13 +21,13 @@ function updateSoftFactor(id, sf) {
 function getQuestionsBySoftFactorId(id){
   return fetch(domain + "/question/?softFactorId=" + id, {
     method: "GET",
-  })
+  });
 }
 
-function postAnswer(content, question){
+function postAnswer(answers) {
   return fetch(domain + "/answers", {
     method: "POST",
-    body: JSON.stringify({content, question}),
+    body: JSON.stringify(answers),
     headers: {
       "Content-Type": "application/json",
     },
@@ -42,6 +42,13 @@ function postSF(softFactor) {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
+  });
+}
+    
+function getAnswersbyUsername(username) {
+  return fetch(domain + "/answers?username=" + username, {
+    method: "GET",
     credentials: "include",
   });
 }
@@ -76,4 +83,4 @@ function postQuestionAPI(question) {
     credentials: "include",
   });
 }
-export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer, updateSoftFactor, postSF, deleteSFAPI, updateQuestionAPI, postQuestionAPI };
+export { getSoftFactors, getQuestionsBySoftFactorId, postAnswer, updateSoftFactor, postSF, deleteSFAPI, updateQuestionAPI, postQuestionAPI, getAnswersbyUsername };

@@ -5,6 +5,7 @@
     align-items: center;
     text-align: center;
     min-height: 90vh;
+    padding: 100px;
 }
 .header {
     line-height: 100px !important;

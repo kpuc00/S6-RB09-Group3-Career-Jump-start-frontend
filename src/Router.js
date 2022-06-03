@@ -6,13 +6,14 @@ import {
   selectIsCandidate,
   selectIsCompany,
   selectIsMatcher,
+  selectIsRegistered,
   selectUser,
 } from "./features/auth/authSlice";
 import {
   Home,
   Login,
   NotFound,
-  Page,
+  ProfilePage,
   CandidateRegistration,
   Register,
   Admin,
@@ -26,17 +27,33 @@ const Router = () => {
   const isCandidate = useSelector(selectIsCandidate);
   const isMatcher = useSelector(selectIsMatcher);
   const isAdmin = useSelector(selectIsAdmin);
+  const isRegistered = useSelector(selectIsRegistered);
 
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route
+        path="/"
+        element={
+          user && isCompany ? (
+            <Navigate replace to="/" />
+          ) : user && isCandidate ? (
+            <Navigate replace to="/profile" />
+          ) : user && isMatcher ? (
+            <Navigate replace to="/" />
+          ) : user && isAdmin ? (
+            <Navigate replace to="/admin" />
+          ) : (
+            <Home />
+          )
+        }
+      />
       <Route
         path="/login"
         element={
           user && isCompany ? (
             <Navigate replace to="/" />
           ) : user && isCandidate ? (
-            <Navigate replace to="/" />
+            <Navigate replace to="/profile" />
           ) : user && isMatcher ? (
             <Navigate replace to="/" />
           ) : user && isAdmin ? (
@@ -48,7 +65,7 @@ const Router = () => {
       />
       <Route
         path="/admin"
-        element={user ? <Admin /> : <Navigate replace to="/login" />}
+        element={user && isAdmin ? <Admin /> : <Navigate replace to="/login" />}
       >
         <Route path="candidates" element={<Candidates />} />
         <Route path="companies" element={<Companies />} />
@@ -56,12 +73,33 @@ const Router = () => {
         <Route path="questions" element={<Questions />} />
       </Route>
       <Route
-        path="/page"
-        element={user ? <Page /> : <Navigate replace to="/login" />}
+        path="/profile"
+        element={user ? <ProfilePage /> : <Navigate replace to="/login" />}
       />
-      <Route path="/register" element={<Register />} />
-      <Route path="/candidate" element={<CandidateRegistration />} />
-      <Route path="/questionnaire" element={<Questionnaire />} />
+      <Route
+        path="/register"
+        element={isRegistered ? <Navigate replace to="/login" /> : <Register />}
+      />
+      <Route
+        path="/candidate"
+        element={
+          isRegistered ? (
+            <Navigate replace to="/login" />
+          ) : (
+            <CandidateRegistration />
+          )
+        }
+      />
+      <Route
+        path="/questionnaire"
+        element={
+          user && !user.questionnaireAnswered ? (
+            <Questionnaire />
+          ) : (
+            <Navigate replace to="/login" />
+          )
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
