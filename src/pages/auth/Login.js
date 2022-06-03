@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -19,25 +19,20 @@ import {
   selectError,
   selectLoading,
   selectMessage,
-  setRegisteredState,
 } from "../../features/auth/authSlice";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loading = useSelector(selectLoading);
   const dispatch = useDispatch();
   const error = useSelector(selectError);
   const message = useSelector(selectMessage);
 
-  useEffect(() => {
-    dispatch(setRegisteredState(false));
-  }, [dispatch]);
-
   const handleChange = (e) => {
     switch (e.target.id) {
-      case "username":
-        setUsername(e.target.value);
+      case "email":
+        setEmail(e.target.value);
         break;
       case "password":
         setPassword(e.target.value);
@@ -48,12 +43,12 @@ const Login = () => {
   };
 
   function submitForm() {
-    if (username !== "" && password !== "")
-      dispatch(loginUser({ username, password }));
+    if (email !== "" && password !== "")
+      dispatch(loginUser({ email, password }));
   }
 
   return (
-    <EuiPage paddingSize="none" style={{backgroundColor: "inherit"}}>
+    <EuiPage paddingSize="none">
       <EuiPageBody paddingSize="l">
         <EuiPageContent
           verticalPosition="center"
@@ -83,8 +78,8 @@ const Login = () => {
           )}
 
           <EuiForm component="form">
-            <EuiFormRow onChange={handleChange} id="username" label="Username">
-              <EuiFieldText name="username" />
+            <EuiFormRow onChange={handleChange} id="email" label="Email">
+              <EuiFieldText name="email" />
             </EuiFormRow>
             <EuiFormRow onChange={handleChange} id="password" label="Password">
               <EuiFieldPassword name="password" />
@@ -98,7 +93,7 @@ const Login = () => {
               iconSize="l"
               size="m"
               aria-label="Login"
-              disabled={username !== "" && password !== "" ? false : true}
+              disabled={email !== "" && password !== "" ? false : true}
             />
           </EuiForm>
           <EuiSpacer size="s" />
