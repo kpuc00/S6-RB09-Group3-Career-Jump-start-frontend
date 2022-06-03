@@ -62,6 +62,9 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    updateUser(state, action) {
+      state.user = action.payload;
+    },
     setRegisteredState(state, action) {
       state.registered = action.payload;
     },
@@ -106,9 +109,12 @@ export const authSlice = createSlice({
             path: "/",
             maxAge: 24 * 60 * 60,
           });
-          localStorage.setItem("showLogoutPage", "true");
           state.loading = false;
         }
+      })
+      .addCase(loginUser.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(regUser.pending, (state) => {
@@ -119,13 +125,16 @@ export const authSlice = createSlice({
       })
       .addCase(regUser.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload);
         if (action.payload.status === 200) {
           state.registered = true;
           state.message = { message: action.payload.message };
         } else {
           state.error = { message: action.payload.error };
         }
+      })
+      .addCase(regUser.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(logoutUser.pending, (state) => {
@@ -142,11 +151,16 @@ export const authSlice = createSlice({
         state.isAdmin = false;
         state.message = action.payload;
         state.loading = false;
+      })
+      .addCase(logoutUser.rejected, (state) => {
+        state.loading = false;
+        state.error = "Something went wrong! Please try again later.";
       });
   },
 });
 
-export const { setRegisteredState, setErrorState } = authSlice.actions;
+export const { updateUser, setRegisteredState, setErrorState } =
+  authSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of

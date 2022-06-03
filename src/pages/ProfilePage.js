@@ -1,62 +1,118 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
   EuiText,
   EuiButton,
   EuiPage,
+  EuiPageBody,
   EuiTitle,
   EuiCallOut,
+  EuiLoadingSpinner,
+  EuiBasicTable,
+  EuiSpacer,
 } from "@elastic/eui";
+import moment from "moment";
 import { selectUser } from "../features/auth/authSlice";
+import {
+  getSFAnswersByUsername,
+  selectAnswers,
+  selectAnswersLoading,
+  selectQuestionsAnswered,
+} from "../features/softfactor/softfactorSlice";
 
 const ProfilePage = () => {
+  const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  const [userLoaded, setUserLoaded] = useState(false);
-  const navigate = useNavigate();
+  const questionsAnswered = useSelector(selectQuestionsAnswered);
+
   useEffect(() => {
-    console.log(user);
+    dispatch(getSFAnswersByUsername(user.username));
+  }, [dispatch, user.username]);
 
-    if (user) setUserLoaded(true);
-    console.log(userLoaded);
-  }, [user, userLoaded]);
+  const answersLoading = useSelector(selectAnswersLoading);
+  const answers = useSelector(selectAnswers);
+  console.log(answers);
 
-  function startQuestionnaire() {
-    navigate("/questionnaire");
-  }
+  const columns = [
+    {
+      field: "question.softFactor.title",
+      name: "Soft Factor",
+    },
+    {
+      field: "question.content",
+      name: "Question",
+    },
+    {
+      field: "content",
+      name: "Answer",
+    },
+  ];
 
   return (
     <EuiPage>
-      <EuiText>
-        <EuiTitle>
-          <h1>
-            Welcome, {user ? `${user.firstName} ${user.lastName}` : "unknown"}
-          </h1>
-        </EuiTitle>
-        <EuiCallOut
-          title="To find the right job for you, first we need you to answer our quick questionnaire"
-          color="warning"
-        >
-          <EuiButton
-            onClick={() => startQuestionnaire()}
-            href="#"
-            color="warning"
-            justify
-          >
-            Start Questionnaire
-          </EuiButton>
-        </EuiCallOut>
-        <h6>Email:</h6>
-        <p>{user && user.email}</p>
-        <h6>Roles:</h6>
-        <p>{user && user.roles}</p>
-        <h6>Your answers to the questionnaire: </h6>
-        <p>
-          {user && user.questionnaireAnswered
-            ? "Loading..."
-            : "Not answered yet."}
-        </p>
-      </EuiText>
+      <EuiPageBody>
+        <EuiText textAlign="center">
+          <EuiTitle>
+            <h1>
+              Welcome, {user ? `${user.firstName} ${user.lastName}` : "unknown"}
+            </h1>
+          </EuiTitle>
+        </EuiText>
+        <EuiText>
+          {user && user.questionnaireAnswered === false && (
+            <EuiCallOut
+              title="To find the right job for you, first we need you to fill our questionnaire!"
+              color="warning"
+            >
+              <Link to="/questionnaire">
+                <EuiButton color="warning">Start Questionnaire</EuiButton>
+              </Link>
+            </EuiCallOut>
+          )}
+          {questionsAnswered && (
+            <EuiCallOut
+              title="Answers submitted successfully!"
+              color="success"
+            ></EuiCallOut>
+          )}
+          <h3>Details:</h3>
+          <ul>
+            <li>
+              <strong>Email: </strong>
+              {user && user.email}
+            </li>
+            <li>
+              <strong>Phone: </strong>
+              {user && user.phoneNumber}
+            </li>
+            <li>
+              <strong>Date of birth: </strong>
+              {user && moment(user.dob).format("D.MM.YYYY")}
+            </li>
+            <li>
+              <strong>Roles: </strong>
+              {user && user.roles}
+            </li>
+          </ul>
+        </EuiText>
+        <EuiSpacer />
+        {answersLoading ? (
+          <EuiLoadingSpinner size="xl" />
+        ) : (
+          answers && (
+            <EuiText>
+              <h4>Your answers to the questionnaire: </h4>
+              <EuiBasicTable
+                tableCaption="Your answers"
+                items={answers}
+                rowHeader="name"
+                columns={columns}
+              />
+            </EuiText>
+          )
+        )}
+      </EuiPageBody>
     </EuiPage>
   );
 };

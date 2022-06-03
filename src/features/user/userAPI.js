@@ -1,22 +1,22 @@
 const domain = "http://localhost:8080/";
-const api = "admin/users";
+const api = "admin/users/";
 
 function fetchCandidates() {
-  return fetch(domain + api + "/candidates", {
+  return fetch(domain + api + "candidates", {
     method: "GET",
     credentials: "include",
   });
 }
 
 function fetchCompanies() {
-  return fetch(domain + api + "/companies", {
+  return fetch(domain + api + "companies", {
     method: "GET",
     credentials: "include",
   });
 }
 
 function updUser(id, updatedUser) {
-  return fetch(domain + api + `/${id}`, {
+  return fetch(domain + api + id, {
     method: "PUT",
     body: JSON.stringify(updatedUser),
     headers: {
@@ -27,10 +27,23 @@ function updUser(id, updatedUser) {
 }
 
 function delUser(id) {
-  return fetch(domain + api + `/${id}`, {
+  return fetch(domain + api + id, {
     method: "DELETE",
     credentials: "include",
   });
 }
 
-export { fetchCandidates, fetchCompanies, updUser, delUser };
+function setAnsweredQuestionnaire(username) {
+  return fetch(domain + api + "questionnaire/" + username, {
+    method: "GET",
+    credentials: "include",
+  });
+}
+
+export {
+  fetchCandidates,
+  fetchCompanies,
+  updUser,
+  delUser,
+  setAnsweredQuestionnaire,
+};
