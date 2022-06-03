@@ -57,12 +57,12 @@ function Questions(props) {
 
   const addChoice = (button, id) => {
     let obj = { button: button, question: id };
-    const test = singleSelectedID.some((e) => e.question.id == id.id); // Need double equals otherwise it doesn't work (this is for all lines with that warning)
+    const test = singleSelectedID.some((e) => e.question.id === id.id); // Need double equals otherwise it doesn't work (this is for all lines with that warning)
     if (!test) {
       let arr = singleSelectedID.concat(obj);
       setSingleSelectedID(arr);
     } else {
-      let index = singleSelectedID.findIndex((e) => e.question.id == id.id);
+      let index = singleSelectedID.findIndex((e) => e.question.id === id.id);
       let arr = (singleSelectedID.splice(index, 1), singleSelectedID);
       let arr2 = arr.concat(obj);
       setSingleSelectedID(arr2);
@@ -183,10 +183,10 @@ function Questions(props) {
               <EuiTextArea
                 name={radioGroupName + question.id}
                 value={
-                  singleSelectedID.some((e) => e.question.id == question.id)
+                  singleSelectedID.some((e) => e.question.id === question.id)
                     ? singleSelectedID[
                         singleSelectedID.findIndex(
-                          (e) => e.question.id == question.id
+                          (e) => e.question.id === question.id
                         )
                       ].button
                     : ""
