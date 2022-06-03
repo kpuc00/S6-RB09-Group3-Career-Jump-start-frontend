@@ -6,11 +6,9 @@ import {
   EuiPanel,
   EuiBasicTable,
   EuiButtonIcon,
-  EuiHealth,
-  EuiSearchBar,
   EuiSpacer,
   EuiLoadingSpinner,
-  EuiButton
+  EuiButton,
 } from "@elastic/eui";
 import {
   getSF,
@@ -20,7 +18,7 @@ import {
   selectSelectedSF,
   updateSF,
   addSF,
-  deleteSF
+  deleteSF,
 } from "../../features/softfactor/softfactorSlice";
 import EditModal from "./EditModalSF";
 import AddModal from "./AddModal";
@@ -34,14 +32,13 @@ const SoftFactors = () => {
     dispatch(getSF());
   }, [dispatch]);
 
-
   const softFactors = useSelector(selectSoftFactors);
   const softFactorLoading = useSelector(selectLoading);
 
-  const selectSelectedSoftFactor = useSelector(selectSelectedSF)
+  const selectSelectedSoftFactor = useSelector(selectSelectedSF);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  
+
   const [addModalVisible, setAddModalVisible] = useState(false);
 
   const [updatedSF, setUpdatedSF] = useState(null);
@@ -82,7 +79,7 @@ const SoftFactors = () => {
       name: "Actions",
       actions,
     },
-  ]
+  ];
 
   const showEditModal = (item) => {
     dispatch(selectedSoftFactor(item));
@@ -97,30 +94,34 @@ const SoftFactors = () => {
 
   const showAddModal = () => {
     setAddModalVisible(true);
-    console.log("show", addModalVisible)
+    console.log("show", addModalVisible);
   };
 
   const closeDeleteModal = () => setDeleteModalVisible(false);
   const closeEditModal = () => setEditModalVisible(false);
 
   const closeAddModal = () => setAddModalVisible(false);
-  
+
   const editSF = () => {
-    dispatch(updateSF({ id: selectSelectedSoftFactor.id, updatedSoftFactor: updatedSF }));
+    dispatch(
+      updateSF({
+        id: selectSelectedSoftFactor.id,
+        updatedSoftFactor: updatedSF,
+      })
+    );
     setUpdatedSF(null);
     closeEditModal();
   };
 
   const postSF = () => {
-    dispatch(addSF({ newSoftFactor: updatedSF }))
+    dispatch(addSF({ newSoftFactor: updatedSF }));
     setUpdatedSF(null);
     closeAddModal();
-  }
+  };
 
   const deleteSoftFactor = () => {
     dispatch(deleteSF({ id: selectSelectedSoftFactor.id }));
-
-  }
+  };
 
   const handleUpdate = (e) => {
     const field = e.target.name;
@@ -132,15 +133,15 @@ const SoftFactors = () => {
   };
 
   return (
-
     <EuiPanel hasShadow={false}>
       <EuiButton onClick={() => showAddModal()}>Add Soft factor</EuiButton>
-        {addModalVisible &&
-          <AddModal
-            onClose={closeAddModal}
-            onConfirm={postSF}
-            handleUpdate={handleUpdate}
-          />}
+      {addModalVisible && (
+        <AddModal
+          onClose={closeAddModal}
+          onConfirm={postSF}
+          handleUpdate={handleUpdate}
+        />
+      )}
       <EuiSpacer />
       {softFactorLoading ? (
         <EuiLoadingSpinner size="xl" />
@@ -162,8 +163,9 @@ const SoftFactors = () => {
         />
       )}
       {deleteModalVisible && (
-        <DeleteModalSF onCancel={closeDeleteModal}
-        onConfirm={deleteSoftFactor} 
+        <DeleteModalSF
+          onCancel={closeDeleteModal}
+          onConfirm={deleteSoftFactor}
         />
       )}
     </EuiPanel>
