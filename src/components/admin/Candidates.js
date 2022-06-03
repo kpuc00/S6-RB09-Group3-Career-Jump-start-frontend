@@ -100,9 +100,9 @@ const Candidates = () => {
       dataType: "boolean",
       render: (status) => {
         const color =
-          status === "ASSIGNED"
+          status === "assigned"
             ? "success"
-            : status === "PENDING"
+            : status === "waiting"
             ? "warning"
             : "danger";
         const label = status || "unknown";
@@ -115,7 +115,7 @@ const Candidates = () => {
     },
   ];
 
-  const items = candidates.filter((candidate, index) => index < 1000);
+  const items = candidates.filter((candidate, index) => index < 10);
 
   const showEditModal = (item) => {
     dispatch(selectUser(item));

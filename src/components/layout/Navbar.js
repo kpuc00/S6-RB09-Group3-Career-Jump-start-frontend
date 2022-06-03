@@ -11,7 +11,6 @@ import {
 import styles from "../../styles/navbar.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { logoutUser, selectUser } from "../../features/auth/authSlice";
-import {useNavigate} from "react-router-dom";
 
 // Variable that uses custom color themes
 const Box: FunctionComponent<{ children: ReactNode }> = ({ children }) => {
@@ -38,26 +37,19 @@ const Navbar = () => {
       DARK: { lightShade: "#7A2C81" },
     },
   };
-  const navigate = useNavigate();
-
-  async function logout(){
-    dispatch(await logoutUser())
-    navigate("/")
-  }
-
   return (
     <EuiThemeProvider modify={overrides}>
       <Box>
         <EuiHeaderSectionItem border="right">
           <EuiText className={styles.heading}>
-            <h4 className={styles.h4}>Career Jump-Start</h4>
+            <h4 className={styles.h4}>Welcome</h4>
           </EuiText>
         </EuiHeaderSectionItem>
         {user && (
           <EuiHeaderSectionItem>
             <EuiHeaderLinks aria-label="App navigation links example">
-              <EuiHeaderLink onClick={() => logout()}>
-                <p style={{color: "white"}}>Log out</p>
+              <EuiHeaderLink onClick={() => dispatch(logoutUser())}>
+                Log out
               </EuiHeaderLink>
             </EuiHeaderLinks>
           </EuiHeaderSectionItem>

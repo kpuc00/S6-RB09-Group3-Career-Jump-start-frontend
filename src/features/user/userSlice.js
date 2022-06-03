@@ -1,11 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {
-  delUser,
-  fetchCandidates,
-  fetchCompanies,
-  setAnsweredQuestionnaire,
-  updUser,
-} from "./userAPI";
+import { delUser, fetchCandidates, fetchCompanies, updUser } from "./userAPI";
 
 const initialState = {
   loading: false,
@@ -15,7 +9,6 @@ const initialState = {
   error: null,
   candidates: [],
   companies: [],
-  questionnaireAnsweredSet: false,
 };
 
 // The function below is called a thunk and allows us to perform async logic. It
@@ -56,15 +49,6 @@ export const deleteUser = createAsyncThunk("user/deleteUser", async (id) => {
   // // The value we return becomes the `fulfilled` action payload
   if (response.ok) return text;
 });
-
-export const setQuestionnaireAnswered = createAsyncThunk(
-  "user/setQuestionnaireAnswered",
-  async (username) => {
-    const response = await setAnsweredQuestionnaire(username);
-    const text = await response.text();
-    if (response.ok) return text;
-  }
-);
 
 export const userSlice = createSlice({
   name: "user",
@@ -141,7 +125,7 @@ export const userSlice = createSlice({
         state.processing = true;
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
-        if (action.payload.status) state.processing = false;
+        if (action.payload.status) state.loading = false;
         else {
           state.candidates = [
             ...state.candidates.filter((item) => {
@@ -157,13 +141,6 @@ export const userSlice = createSlice({
           state.selectedUser = null;
         }
       });
-    builder.addCase(setQuestionnaireAnswered.fulfilled, (state, action) => {
-      state.loading = false;
-      if (action.payload.status) {
-      } else {
-        state.questionnaireAnsweredSet = true;
-      }
-    });
   },
 });
 
@@ -180,7 +157,5 @@ export const selectCompanies = (state) => state.user.companies;
 export const selectMessage = (state) => state.user.message;
 export const selectError = (state) => state.user.error;
 export const selectSelectedUser = (state) => state.user.selectedUser;
-export const selectQuestionnaireAnsweredSet = (state) =>
-  state.user.questionnaireAnsweredSet;
 
 export default userSlice.reducer;
