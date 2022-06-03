@@ -14,12 +14,17 @@ import {
   Login,
   NotFound,
   ProfilePage,
-  CandidateRegistration,
   Register,
   Admin,
   Questionnaire,
 } from "./pages";
-import { Candidates, Companies, Questions, SoftFactors } from "./components";
+import {
+  Candidates,
+  Companies,
+  Questions,
+  RegistrationForm,
+  SoftFactors,
+} from "./components";
 
 const Router = () => {
   const user = useSelector(selectUser);
@@ -83,11 +88,7 @@ const Router = () => {
       <Route
         path="/candidate"
         element={
-          isRegistered ? (
-            <Navigate replace to="/login" />
-          ) : (
-            <CandidateRegistration />
-          )
+          isRegistered ? <Navigate replace to="/login" /> : <RegistrationForm />
         }
       />
       <Route

@@ -69,7 +69,11 @@ const Login = () => {
   return (
     <EuiPage>
       <EuiPageBody component="div">
-        <EuiPageContent verticalPosition="center" horizontalPosition="center">
+        <EuiPageContent
+          verticalPosition="center"
+          horizontalPosition="center"
+          style={{ minWidth: "60%" }}
+        >
           <EuiPageContentHeader style={{ justifyContent: "center" }}>
             <EuiPageContentHeaderSection>
               <EuiTitle>
@@ -95,15 +99,17 @@ const Login = () => {
                 onChange={handleChange}
                 id="username"
                 label="Username"
+                fullWidth
               >
-                <EuiFieldText name="username" />
+                <EuiFieldText name="username" fullWidth />
               </EuiFormRow>
               <EuiFormRow
                 onChange={handleChange}
                 id="password"
                 label="Password"
+                fullWidth
               >
-                <EuiFieldPassword name="password" />
+                <EuiFieldPassword name="password" fullWidth />
               </EuiFormRow>
               <EuiSpacer size="m" />
               <EuiButtonIcon

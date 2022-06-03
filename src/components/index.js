@@ -7,6 +7,7 @@ import Questions from "./admin/Questions";
 import Company from "./admin/Company";
 import EditModal from "./admin/EditModal";
 import DeleteModal from "./admin/DeleteModal";
+import RegistrationForm from "./auth/RegistrationForm";
 export {
   Navbar,
   AdminTabs,
@@ -17,4 +18,5 @@ export {
   Company,
   EditModal,
   DeleteModal,
+  RegistrationForm,
 };

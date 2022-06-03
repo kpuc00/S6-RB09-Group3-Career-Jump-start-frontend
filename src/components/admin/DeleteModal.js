@@ -17,8 +17,7 @@ const DeleteModal = (props) => {
       defaultFocusedButton="confirm"
     >
       <p>
-        You are about to delete{" "}
-        <strong>{`${selectedUser.firstName} ${selectedUser.lastName}`}</strong>
+        You are about to delete <strong>{selectedUser.username}</strong>
       </p>
       <p>Are you sure you want to do this?</p>
     </EuiConfirmModal>

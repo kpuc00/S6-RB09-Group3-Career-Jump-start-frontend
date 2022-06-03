@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../styles/candidate-registration.module.css";
+import styles from "../../styles/candidate-registration.module.css";
 import { EuiButton, EuiText } from "@elastic/eui";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
