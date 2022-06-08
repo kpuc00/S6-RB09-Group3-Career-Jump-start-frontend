@@ -1,4 +1,7 @@
-const domain = "http://localhost:8081/admin";
+const domain =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8081/admin"
+    : "https://api.careerjumpapp.com/soft-factor/admin";
 
 function getSoftFactors() {
   return fetch(domain + "/softfactor", {
