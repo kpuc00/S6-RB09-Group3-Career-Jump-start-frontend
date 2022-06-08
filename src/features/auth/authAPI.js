@@ -1,4 +1,7 @@
-const domain = "http://localhost:8080/";
+const domain =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:8080/"
+    : "https://api.careerjumpapp.com/authentication/";
 
 function login(username, password) {
   return fetch(domain + "auth/signin", {
