@@ -289,6 +289,7 @@ const RegistrationForm = () => {
                     onClick={() => submitForm()}
                     isLoading={loading}
                     style={{ background: "#7A2C81" }}
+                    id="registration-form-submit-button"
                   >
                     Sign Up
                   </EuiButton>

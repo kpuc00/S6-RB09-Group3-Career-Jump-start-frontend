@@ -30,6 +30,7 @@ const Register = () => {
             className={styles.button}
             color="text"
             minWidth={20}
+            id="register-candidate-button"
           >
             <FontAwesomeIcon icon={faArrowRight} className={styles.icon} />
           </EuiButton>

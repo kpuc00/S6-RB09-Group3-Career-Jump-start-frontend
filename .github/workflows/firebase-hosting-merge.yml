@@ -7,7 +7,25 @@ name: Deploy to Firebase Hosting on merge
     branches:
       - main
 jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Add serve
+        run: yarn global add serve
+      - name: Cypress run
+        uses: cypress-io/github-action@v4
+        with:
+          build: npm run build
+          wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
+          start: serve -s build
+
   build_and_deploy:
+    needs: cypress-run
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,3 +36,4 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_CAREER_JUMP_START }}'
           channelId: live
           projectId: career-jump-start
+

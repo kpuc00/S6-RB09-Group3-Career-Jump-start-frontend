@@ -36,6 +36,7 @@ const Home = () => {
             className={styles.button}
             color="text"
             minWidth={20}
+            id="home-login-button"
           >
             <FontAwesomeIcon icon={faArrowRight} className={styles.icon} />
           </EuiButton>
@@ -62,6 +63,7 @@ const Home = () => {
             className={styles.button}
             color="text"
             minWidth={20}
+            id="home-register-button"
           >
             <FontAwesomeIcon icon={faArrowRight} className={styles.icon} />
           </EuiButton>
