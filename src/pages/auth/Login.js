@@ -151,6 +151,7 @@ const Login = () => {
                 iconSize="l"
                 size="m"
                 aria-label="Login"
+                id="login-submit-button"
                 //disabled={username !== "" && password !== "" ? false : true}
               />
             </EuiForm>
