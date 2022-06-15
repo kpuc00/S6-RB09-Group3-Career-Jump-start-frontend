@@ -17,6 +17,7 @@ import {
   Register,
   Admin,
   Questionnaire,
+  PrivacyPolicy
 } from "./pages";
 import {
   Candidates,
@@ -101,6 +102,7 @@ const Router = () => {
           )
         }
       />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

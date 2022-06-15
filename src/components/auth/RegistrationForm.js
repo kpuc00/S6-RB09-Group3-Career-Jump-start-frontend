@@ -17,6 +17,9 @@ import {
   EuiFormRow,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiCheckbox,
+  EuiText,
+  EuiLink
 } from "@elastic/eui";
 import moment from "moment";
 import {
@@ -25,6 +28,7 @@ import {
   selectError,
 } from "../../features/auth/authSlice";
 import { useSelector, useDispatch } from "react-redux";
+import {Link} from "react-router-dom";
 
 const RegistrationForm = () => {
   const [showValidationErrors, setShowValidationErrors] = useState(false);
@@ -36,6 +40,7 @@ const RegistrationForm = () => {
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [dob, setDob] = useState(moment().subtract(20, "y"));
+  const [gdprCheckbox, setGdprCheckbox] = useState(false)
   const role = ["candidate"];
   const error = useSelector(selectError);
   const loading = useSelector(selectLoading);
@@ -279,7 +284,22 @@ const RegistrationForm = () => {
                   isInvalid={displayErrors().hasOwnProperty("repeatPassword")}
                 />
               </EuiFormRow>
-
+              <EuiSpacer />
+              <EuiFormRow>
+                <EuiFlexGroup gutterSize="s">
+                  <EuiFlexItem grow={false}>
+                    <EuiCheckbox
+                        id="gdpr-checkbox"
+                        onChange={() => setGdprCheckbox(!gdprCheckbox)}
+                        checked={gdprCheckbox}
+                    />
+                  </EuiFlexItem>
+                  <EuiFlexItem>
+                    <EuiText size="s">You agree with the storage and handling of your data by Career Jump-Start
+                    in accordance to our <Link to="/privacy-policy" target="_blank" rel="noopener noreferrer"><EuiLink>Privacy Policy</EuiLink></Link></EuiText>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </EuiFormRow>
               <EuiSpacer />
               <EuiFlexGroup justifyContent="spaceAround">
                 <EuiFlexItem grow={false}>
@@ -288,8 +308,9 @@ const RegistrationForm = () => {
                     color="primary"
                     onClick={() => submitForm()}
                     isLoading={loading}
-                    style={{ background: "#7A2C81" }}
+                    style={gdprCheckbox ?{ background: "#7A2C81" } : {background: "#e4daec"}}
                     id="registration-form-submit-button"
+                    disabled={!gdprCheckbox}
                   >
                     Sign Up
                   </EuiButton>
