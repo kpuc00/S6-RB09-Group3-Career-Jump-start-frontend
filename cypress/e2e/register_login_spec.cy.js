@@ -39,6 +39,8 @@ describe("My first test", function () {
     cy.get('[id=repeat_password]')
         .type(password)
         .should('have.value', password)
+    cy.get('[id=gdpr-checkbox]')
+        .click()
     cy.get('[id=registration-form-submit-button]')
         .click()
 

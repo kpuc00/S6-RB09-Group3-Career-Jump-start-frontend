@@ -49,8 +49,8 @@ const Navbar = () => {
     <EuiThemeProvider modify={overrides}>
       <Box>
         <EuiHeaderSectionItem border="right">
-          <EuiText className={styles.heading}>
-            <h4 className={styles.h4}>Career Jump-Start</h4>
+          <EuiText className={styles.heading} style={{cursor: "pointer"}}>
+            <h4 onClick={() => navigate("/")} className={styles.h4}>Career Jump-Start</h4>
           </EuiText>
         </EuiHeaderSectionItem>
         {user && (
