@@ -156,6 +156,7 @@ export const softfactorSlice = createSlice({
       })
       .addCase(addSF.rejected, (state) => {
         state.error = defaultErrorMsg;
+        state.loading = false;
       });
     builder
       .addCase(getSF.pending, (state) => {
@@ -172,8 +173,8 @@ export const softfactorSlice = createSlice({
         state.loading = false;
       })
       .addCase(getSF.rejected, (state) => {
-        state.loading = false;
         state.error = defaultErrorMsg;
+        state.loading = false;
       });
     builder
       .addCase(updateSF.pending, (state) => {
@@ -202,9 +203,9 @@ export const softfactorSlice = createSlice({
         state.selectedSoftFactor = null;
       })
       .addCase(updateSF.rejected, (state) => {
-        state.processing = true;
         state.message = null;
         state.error = defaultErrorMsg;
+        state.processing = false;
       });
     builder
       .addCase(answerPost.pending, (state) => {
@@ -224,8 +225,8 @@ export const softfactorSlice = createSlice({
         state.loading = false;
       })
       .addCase(answerPost.rejected, (state) => {
-        state.loading = false;
         state.error = defaultErrorMsg;
+        state.loading = false;
       });
     builder
       .addCase(getQuestionsBySFId.pending, (state) => {
@@ -243,8 +244,8 @@ export const softfactorSlice = createSlice({
         state.loading = false;
       })
       .addCase(getQuestionsBySFId.rejected, (state) => {
-        state.loading = false;
         state.error = defaultErrorMsg;
+        state.loading = false;
       });
 
     builder
@@ -275,8 +276,8 @@ export const softfactorSlice = createSlice({
         state.selectedSoftFactor = null;
       })
       .addCase(updateQuestion.rejected, (state) => {
-        state.loading = false;
         state.error = defaultErrorMsg;
+        state.processing = false;
       });
 
     builder
@@ -295,8 +296,8 @@ export const softfactorSlice = createSlice({
         state.answersLoading = false;
       })
       .addCase(getSFAnswersByUsername.rejected, (state) => {
-        state.answersLoading = false;
         state.error = defaultErrorMsg;
+        state.answersLoading = false;
       });
 
     builder
@@ -317,6 +318,7 @@ export const softfactorSlice = createSlice({
       })
       .addCase(addQuestion.rejected, (state) => {
         state.error = defaultErrorMsg;
+        state.loading = false;
       });
     builder
       .addCase(deleteSF.pending, (state) => {
@@ -337,9 +339,9 @@ export const softfactorSlice = createSlice({
         state.selectedSoftFactor = null;
       })
       .addCase(deleteSF.rejected, (state) => {
-        state.processing = true;
         state.message = null;
         state.error = defaultErrorMsg;
+        state.processing = false;
       });
     builder
       .addCase(deleteQuestion.pending, (state) => {
@@ -362,9 +364,9 @@ export const softfactorSlice = createSlice({
         state.selectedQuestion = null;
       })
       .addCase(deleteQuestion.rejected, (state) => {
-        state.processing = true;
         state.message = null;
         state.error = defaultErrorMsg;
+        state.processing = false;
       });
   },
 });
