@@ -18,6 +18,8 @@ const initialState = {
   isAdmin: roles ? roles.includes("ROLE_ADMIN") : false,
 };
 
+const defaultErrorMsg = "Something went wrong! Please try again later.";
+
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async
@@ -28,7 +30,7 @@ export const loginUser = createAsyncThunk(
   async (params, thunkAPI) => {
     const response = await login(params.username, params.password);
     // The value we return becomes the `fulfilled` action payload
-    return await response.json();
+    return { status: response.status, data: await response.json() };
   }
 );
 
@@ -45,19 +47,14 @@ export const regUser = createAsyncThunk(
       params.password,
       params.role
     );
-    const json = await response.json();
-    return { status: response.status, ...json };
+    return { status: response.status, data: await response.json() };
   }
 );
 
-export const logoutUser = createAsyncThunk(
-  "auth/logoutUser",
-  async (params, thunkAPI) => {
-    const response = await logout();
-    // The value we return becomes the `fulfilled` action payload
-    return await response.json();
-  }
-);
+export const logoutUser = createAsyncThunk("auth/logoutUser", async () => {
+  const response = await logout();
+  return { status: response.status, data: await response.json() };
+});
 
 export const authSlice = createSlice({
   name: "auth",
@@ -93,12 +90,11 @@ export const authSlice = createSlice({
         state.message = null;
       })
       .addCase(loginUser.fulfilled, (state, action) => {
-        if (action.payload.status) {
-          state.loading = false;
-          state.error = action.payload.error;
-        } else {
-          state.user = action.payload;
-          const role = action.payload.roles[0];
+        const payload = action.payload;
+        console.log(payload);
+        if (payload.status === 200) {
+          state.user = payload.data;
+          const role = payload.data.roles[0];
           switch (role) {
             case "ROLE_COMPANY":
               state.isCompany = true;
@@ -116,16 +112,16 @@ export const authSlice = createSlice({
             default:
               break;
           }
-          cookie.save("user", action.payload, {
+          cookie.save("user", payload.data, {
             path: "/",
             maxAge: 24 * 60 * 60,
           });
-          state.loading = false;
-        }
+        } else state.error = payload.data.error;
+        state.loading = false;
       })
       .addCase(loginUser.rejected, (state) => {
         state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
+        state.error = defaultErrorMsg;
       });
     builder
       .addCase(regUser.pending, (state) => {
@@ -135,17 +131,18 @@ export const authSlice = createSlice({
         state.registered = false;
       })
       .addCase(regUser.fulfilled, (state, action) => {
-        state.loading = false;
-        if (action.payload.status === 200) {
+        const payload = action.payload;
+        if (payload.status === 200) {
           state.registered = true;
-          state.message = action.payload.message;
+          state.message = payload.data.message;
         } else {
-          state.error = action.payload.error;
+          state.error = payload.data.error;
         }
+        state.loading = false;
       })
       .addCase(regUser.rejected, (state) => {
         state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
+        state.error = defaultErrorMsg;
       });
     builder
       .addCase(logoutUser.pending, (state) => {
@@ -154,19 +151,22 @@ export const authSlice = createSlice({
         state.message = null;
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
-        state.user = null;
-        cookie.remove("user");
-        state.isCompany = false;
-        state.isCandidate = false;
-        state.isMatcher = false;
-        state.isAdmin = false;
-        state.message = action.payload.message;
-        state.userLoggedOut = true;
+        const payload = action.payload;
+        if (payload.status === 200) {
+          cookie.remove("user");
+          state.user = null;
+          state.isCompany = false;
+          state.isCandidate = false;
+          state.isMatcher = false;
+          state.isAdmin = false;
+          state.userLoggedOut = true;
+          state.message = payload.data.message;
+        } else state.error = defaultErrorMsg;
         state.loading = false;
       })
       .addCase(logoutUser.rejected, (state) => {
         state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
+        state.error = defaultErrorMsg;
       });
   },
 });
