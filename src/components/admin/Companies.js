@@ -6,12 +6,15 @@ import {
   EuiLoadingSpinner,
   EuiText,
   EuiProgress,
+  EuiCallOut,
 } from "@elastic/eui";
 import Company from "./Company";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getCompanies,
   selectCompanies,
+  selectError,
+  selectMessage,
   selectUserLoading,
   selectUserProcessing,
 } from "../../features/user/userSlice";
@@ -28,11 +31,25 @@ const Companies = () => {
   const userProcessing = useSelector(selectUserProcessing);
   const userLoading = useSelector(selectUserLoading);
   const companies = useSelector(selectCompanies);
+  const message = useSelector(selectMessage);
+  const error = useSelector(selectError);
 
   return (
     <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
+      {error && (
+        <>
+          <EuiCallOut color="danger" iconType="alert" title={error} />
+          <EuiSpacer />
+        </>
+      )}
+      {message && (
+        <>
+          <EuiCallOut title={message} />
+          <EuiSpacer />
+        </>
+      )}
       {userProcessing && <EuiProgress size="xs" color="primary" />}
       {userLoading ? (
         <EuiLoadingSpinner size="xl" />

@@ -13,6 +13,7 @@ import {
   deleteUser,
   getCandidates,
   selectCandidates,
+  selectError,
   selectMessage,
   selectSelectedUser,
   selectUser,
@@ -34,6 +35,7 @@ const Candidates = () => {
   const [updatedUser, setUpdatedUser] = useState(null);
 
   const userProcessing = useSelector(selectUserProcessing);
+  const error = useSelector(selectError);
   const message = useSelector(selectMessage);
 
   useEffect(() => {
@@ -156,6 +158,12 @@ const Candidates = () => {
     <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
+      {error && (
+        <>
+          <EuiCallOut color="danger" iconType="alert" title={error} />
+          <EuiSpacer />
+        </>
+      )}
       {message && (
         <>
           <EuiCallOut title={message} />
