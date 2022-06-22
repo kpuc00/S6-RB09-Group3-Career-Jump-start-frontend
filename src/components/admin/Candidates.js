@@ -6,7 +6,6 @@ import {
   EuiHealth,
   EuiSearchBar,
   EuiSpacer,
-  EuiLoadingSpinner,
 } from "@elastic/eui";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -154,20 +153,16 @@ const Candidates = () => {
     <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
-      {userLoading ? (
-        <EuiLoadingSpinner size="xl" />
-      ) : (
-        candidates && (
-          <EuiBasicTable
-            tableCaption="Candidates"
-            items={items}
-            rowHeader="name"
-            columns={columns}
-            sorting={sorting}
-            onChange={onTableChange}
-            loading={userProcessing}
-          />
-        )
+      {candidates && (
+        <EuiBasicTable
+          tableCaption="Candidates"
+          items={items}
+          rowHeader="name"
+          columns={columns}
+          sorting={sorting}
+          onChange={onTableChange}
+          loading={userLoading || userProcessing}
+        />
       )}
       {editModalVisible && (
         <EditModal

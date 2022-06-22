@@ -7,7 +7,6 @@ import {
   EuiBasicTable,
   EuiButtonIcon,
   EuiSpacer,
-  EuiLoadingSpinner,
   EuiButton,
 } from "@elastic/eui";
 import {
@@ -143,17 +142,14 @@ const SoftFactors = () => {
         />
       )}
       <EuiSpacer />
-      {softFactorLoading ? (
-        <EuiLoadingSpinner size="xl" />
-      ) : (
-        softFactors && (
-          <EuiBasicTable
-            tableCaption="Soft factors"
-            items={softFactors}
-            rowHeader="name"
-            columns={columns}
-          />
-        )
+      {softFactors && (
+        <EuiBasicTable
+          tableCaption="Soft factors"
+          items={softFactors}
+          rowHeader="name"
+          columns={columns}
+          loading={softFactorLoading}
+        />
       )}
       {editModalVisible && (
         <EditModal

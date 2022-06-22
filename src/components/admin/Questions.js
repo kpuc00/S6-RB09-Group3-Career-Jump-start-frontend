@@ -6,7 +6,6 @@ import {
   EuiBasicTable,
   EuiButtonIcon,
   EuiSpacer,
-  EuiLoadingSpinner,
   EuiButton,
   EuiComboBox,
   EuiFlexGroup,
@@ -195,17 +194,14 @@ const Questions = () => {
       </EuiFlexGroup>
 
       <EuiSpacer />
-      {questionsLoading ? (
-        <EuiLoadingSpinner size="xl" />
-      ) : (
-        questions && (
-          <EuiBasicTable
-            tableCaption="Soft factors"
-            items={getQuestionContent(questions)}
-            rowHeader="name"
-            columns={columns}
-          />
-        )
+      {questions && (
+        <EuiBasicTable
+          tableCaption="Soft factors"
+          items={getQuestionContent(questions)}
+          rowHeader="name"
+          columns={columns}
+          loading={questionsLoading}
+        />
       )}
 
       {editModalVisible && (
