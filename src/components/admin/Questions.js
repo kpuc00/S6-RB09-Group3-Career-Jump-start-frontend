@@ -22,12 +22,9 @@ import {
   updateQuestion,
   addQuestion,
   selectSoftFactors,
-  selectedSoftFactor,
 } from "../../features/softfactor/softfactorSlice";
 import EditModalQuestions from "./EditModalQuestions";
-
 import AddModalQuestion from "./AddModalQuestion";
-//import DeleteModalSF from "./DeleteModalSF";
 
 const Questions = () => {
   const dispatch = useDispatch();
@@ -43,7 +40,6 @@ const Questions = () => {
   const selectedQuestion = useSelector(selectSelectedQ);
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [addModalQuestionVisible, setAddModalQuestionVisible] = useState(false);
-  //const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [newQuestion, setNewQuestion] = useState({});
   const [updatedQuestion, setUpdatedQuestion] = useState(null);
 
@@ -53,13 +49,7 @@ const Questions = () => {
     setEditModalVisible(true);
   };
 
-  // const showDeleteModal = (item) => {
-  //   dispatch(selectQuestion(item));
-  //   setDeleteModalVisible(true);
-  // };
-
   const closeEditModal = () => setEditModalVisible(false);
-  //const closeDeleteModal = () => setDeleteModalVisible(false);
 
   const actions = [
     {
@@ -121,7 +111,7 @@ const Questions = () => {
 
   const onChange = (selectedOptions) => {
     setSelected(selectedOptions);
-    let id = getSFId(selectedOptions[0].label);
+    const id = getSFId(selectedOptions[0].label);
 
     dispatch(getQuestionsBySFId({ id }));
   };
@@ -161,8 +151,6 @@ const Questions = () => {
       [field]: newValue,
     });
   };
-
-  const sf = useSelector(selectedSoftFactor);
 
   const closeAddModalQuestion = () => setAddModalQuestionVisible(false);
 

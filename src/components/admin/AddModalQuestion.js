@@ -13,17 +13,12 @@ import {
   EuiComboBox,
   EuiRadioGroup,
 } from "@elastic/eui";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
-import {
-  selectSoftFactors,
-  getQuestionsBySFId,
-} from "../../features/softfactor/softfactorSlice";
+import { selectSoftFactors } from "../../features/softfactor/softfactorSlice";
 
 const AddModalQuestion = (props) => {
-  const { onClose, onConfirm, handleUpdate, newQuestion, setNewQuestion } =
-    props;
-  const dispatch = useDispatch();
+  const { onClose, onConfirm, newQuestion, setNewQuestion } = props;
   const softFactors = useSelector(selectSoftFactors);
 
   const getLabels = (softFactors) => {
