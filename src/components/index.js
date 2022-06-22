@@ -7,6 +7,7 @@ import Questions from "./admin/Questions";
 import Company from "./admin/Company";
 import EditModal from "./admin/EditModal";
 import DeleteModal from "./admin/DeleteModal";
+import DeleteModalQuestion from "./admin/DeleteModalQuestion";
 import RegistrationForm from "./auth/RegistrationForm";
 export {
   Navbar,
@@ -18,5 +19,6 @@ export {
   Company,
   EditModal,
   DeleteModal,
+  DeleteModalQuestion,
   RegistrationForm,
 };

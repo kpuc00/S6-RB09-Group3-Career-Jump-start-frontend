@@ -6,7 +6,7 @@ describe("My first test", function () {
     let password = makePassword(3);
     let email = username + "@email.com"
 
-    cy.visit("http://localhost:3000")
+    cy.visit("https://careerjumpapp.com/")
     cy.get('[id=home-register-button]')
         .click()
 

@@ -1,11 +1,11 @@
 import { EuiConfirmModal } from "@elastic/eui";
 import { useSelector } from "react-redux";
-import { selectSelectedSF } from "../../features/softfactor/softfactorSlice";
+import { selectSelectedQ } from "../../features/softfactor/softfactorSlice";
 
-const DeleteModalSF = (props) => {
+const DeleteModalQuestion = (props) => {
   const { onCancel, onConfirm } = props;
-  const selectedSF = useSelector(selectSelectedSF);
-  console.log(selectedSF);
+  const selectedQuestion = useSelector(selectSelectedQ);
+  console.log(selectedQuestion);
   return (
     <EuiConfirmModal
       title="This cannot be undone"
@@ -17,10 +17,12 @@ const DeleteModalSF = (props) => {
       defaultFocusedButton="confirm"
     >
       <p>
-        You are about to delete <strong>{`${selectedSF.title}`}</strong>
+        You are about to delete the following question:
+        <br />
+        <strong>{`${selectedQuestion.content}`}</strong>
       </p>
       <p>Are you sure you want to do this?</p>
     </EuiConfirmModal>
   );
 };
-export default DeleteModalSF;
+export default DeleteModalQuestion;

@@ -85,6 +85,13 @@ function postQuestionAPI(question) {
   });
 }
 
+function deleteQuestionAPI(id) {
+  return fetch(domain + "/question/" + id, {
+    method: "DELETE",
+    credentials: "include",
+  });
+}
+
 export {
   getSoftFactors,
   getQuestionsBySoftFactorId,
@@ -95,4 +102,5 @@ export {
   updateQuestionAPI,
   postQuestionAPI,
   getAnswersbyUsername,
+  deleteQuestionAPI,
 };

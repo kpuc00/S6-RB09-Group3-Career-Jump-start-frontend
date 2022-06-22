@@ -24,6 +24,7 @@ import {
   selectError,
   selectQuestionsAnswered,
 } from "../features/softfactor/softfactorSlice";
+import { selectMessage } from "../features/user/userSlice";
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -38,6 +39,7 @@ const ProfilePage = () => {
   const answersLoading = useSelector(selectAnswersLoading);
   const answers = useSelector(selectAnswers);
   const error = useSelector(selectError);
+  const message = useSelector(selectMessage);
 
   const columns = [
     {
@@ -83,10 +85,7 @@ const ProfilePage = () => {
                 </EuiCallOut>
               )}
               {questionsAnswered && (
-                <EuiCallOut
-                  title="Answers submitted successfully!"
-                  color="success"
-                ></EuiCallOut>
+                <EuiCallOut title={message} color="success"></EuiCallOut>
               )}
               <h3>Details:</h3>
               <ul>

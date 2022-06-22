@@ -9,12 +9,16 @@ import {
 
 const initialState = {
   loading: false,
+  error: null,
+  message: null,
   processing: false,
   selectedUser: null,
   candidates: [],
   companies: [],
   questionnaireAnsweredSet: false,
 };
+
+const defaultErrorMsg = "Something went wrong! Please try again later.";
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
@@ -26,41 +30,44 @@ export const getCandidates = createAsyncThunk(
   async () => {
     const response = await fetchCandidates();
     // The value we return becomes the `fulfilled` action payload
-    const json = await response.json();
-    return json;
+    return { status: response.status, data: await response.json() };
   }
 );
 
 export const getCompanies = createAsyncThunk("user/getCompanies", async () => {
   const response = await fetchCompanies();
-  // The value we return becomes the `fulfilled` action payload
-  const json = await response.json();
-  return json;
+  return { status: response.status, data: await response.json() };
 });
 
 export const updateUser = createAsyncThunk(
   "user/updateUser",
   async (params) => {
     const response = await updUser(params.id, params.updatedUser);
-    const text = await response.text();
     // // The value we return becomes the `fulfilled` action payload
-    if (response.ok) return { text, updatedUser: params.updatedUser };
+    return {
+      status: response.status,
+      text: await response.text(),
+      data: params.updatedUser,
+    };
   }
 );
 
 export const deleteUser = createAsyncThunk("user/deleteUser", async (id) => {
   const response = await delUser(id);
-  const text = await response.text();
-  // // The value we return becomes the `fulfilled` action payload
-  if (response.ok) return text;
+  return {
+    status: response.status,
+    text: await response.text(),
+  };
 });
 
 export const setQuestionnaireAnswered = createAsyncThunk(
   "user/setQuestionnaireAnswered",
   async (username) => {
     const response = await setAnsweredQuestionnaire(username);
-    const text = await response.text();
-    if (response.ok) return text;
+    return {
+      status: response.status,
+      text: await response.text(),
+    };
   }
 );
 
@@ -89,66 +96,91 @@ export const userSlice = createSlice({
     builder
       .addCase(getCandidates.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(getCandidates.fulfilled, (state, action) => {
-        if (action.payload.status) state.loading = false;
-        else {
-          state.candidates = action.payload;
-          state.loading = false;
-        }
+        const payload = action.payload;
+        if (payload.status === 200) state.candidates = payload.data;
+        else state.error = defaultErrorMsg;
+        state.loading = false;
+      })
+      .addCase(getCandidates.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.message = null;
+        state.loading = false;
       });
     builder
       .addCase(getCompanies.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(getCompanies.fulfilled, (state, action) => {
-        if (action.payload.status) state.loading = false;
-        else {
-          state.companies = action.payload;
-          state.loading = false;
-        }
+        const payload = action.payload;
+        if (payload.status === 200) state.companies = payload.data;
+        else state.error = defaultErrorMsg;
+        state.loading = false;
+      })
+      .addCase(getCompanies.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.message = null;
+        state.loading = false;
       });
     builder
       .addCase(updateUser.pending, (state) => {
         state.processing = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.candidates = [
-          ...state.candidates.map((item) => {
-            if (item.id !== action.payload.updatedUser.id) {
-              // This isn't the item we care about - keep it as-is
-              return item;
-            }
-            // Otherwise, this is the one we want - return an updated value
-            return {
-              ...item,
-              ...action.payload.updatedUser,
-            };
-          }),
-        ];
-        state.companies = [
-          ...state.companies.map((item) => {
-            if (item.id !== action.payload.updatedUser.id) {
-              // This isn't the item we care about - keep it as-is
-              return item;
-            }
-            // Otherwise, this is the one we want - return an updated value
-            return {
-              ...item,
-              ...action.payload.updatedUser,
-            };
-          }),
-        ];
+        const payload = action.payload;
+        if (payload.status === 200) {
+          state.candidates = [
+            ...state.candidates.map((item) => {
+              if (item.id !== payload.data.id) {
+                // This isn't the item we care about - keep it as-is
+                return item;
+              }
+              // Otherwise, this is the one we want - return an updated value
+              return {
+                ...item,
+                ...payload.data,
+              };
+            }),
+          ];
+          state.companies = [
+            ...state.companies.map((item) => {
+              if (item.id !== payload.data.id) {
+                // This isn't the item we care about - keep it as-is
+                return item;
+              }
+              // Otherwise, this is the one we want - return an updated value
+              return {
+                ...item,
+                ...payload.data,
+              };
+            }),
+          ];
+          state.message = payload.text;
+        } else state.error = defaultErrorMsg;
         state.processing = false;
         state.selectedUser = null;
+      })
+      .addCase(updateUser.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.message = null;
+        state.loading = false;
       });
     builder
       .addCase(deleteUser.pending, (state) => {
         state.processing = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(deleteUser.fulfilled, (state, action) => {
-        if (action.payload.status) state.processing = false;
-        else {
+        const payload = action.payload;
+        if (payload.status === 200) {
           state.candidates = [
             ...state.candidates.filter((item) => {
               return item.id !== state.selectedUser.id;
@@ -159,17 +191,35 @@ export const userSlice = createSlice({
               return item.id !== state.selectedUser.id;
             }),
           ];
-          state.processing = false;
-          state.selectedUser = null;
-        }
+        } else state.error = defaultErrorMsg;
+        state.processing = false;
+        state.selectedUser = null;
+      })
+      .addCase(deleteUser.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.message = null;
+        state.processing = false;
       });
-    builder.addCase(setQuestionnaireAnswered.fulfilled, (state, action) => {
-      state.loading = false;
-      if (action.payload.status) {
-      } else {
-        state.questionnaireAnsweredSet = true;
-      }
-    });
+    builder
+      .addCase(setQuestionnaireAnswered.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(setQuestionnaireAnswered.fulfilled, (state, action) => {
+        const payload = action.payload;
+        if (payload.status === 200) {
+          state.questionnaireAnsweredSet = true;
+          console.log(payload.text);
+          state.message = payload.text;
+        }
+        state.loading = false;
+      })
+      .addCase(setQuestionnaireAnswered.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.message = null;
+        state.loading = false;
+      });
   },
 });
 

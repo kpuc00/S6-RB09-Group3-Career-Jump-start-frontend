@@ -6,13 +6,14 @@ import {
   EuiHealth,
   EuiSearchBar,
   EuiSpacer,
-  EuiLoadingSpinner,
+  EuiCallOut,
 } from "@elastic/eui";
 import { useDispatch, useSelector } from "react-redux";
 import {
   deleteUser,
   getCandidates,
   selectCandidates,
+  selectMessage,
   selectSelectedUser,
   selectUser,
   selectUserLoading,
@@ -33,6 +34,7 @@ const Candidates = () => {
   const [updatedUser, setUpdatedUser] = useState(null);
 
   const userProcessing = useSelector(selectUserProcessing);
+  const message = useSelector(selectMessage);
 
   useEffect(() => {
     dispatch(setAdminSelectedTabId("candidates"));
@@ -154,20 +156,22 @@ const Candidates = () => {
     <EuiPanel hasShadow={false}>
       <EuiSearchBar onChange={() => {}} />
       <EuiSpacer />
-      {userLoading ? (
-        <EuiLoadingSpinner size="xl" />
-      ) : (
-        candidates && (
-          <EuiBasicTable
-            tableCaption="Candidates"
-            items={items}
-            rowHeader="name"
-            columns={columns}
-            sorting={sorting}
-            onChange={onTableChange}
-            loading={userProcessing}
-          />
-        )
+      {message && (
+        <>
+          <EuiCallOut title={message} />
+          <EuiSpacer />
+        </>
+      )}
+      {candidates && (
+        <EuiBasicTable
+          tableCaption="Candidates"
+          items={items}
+          rowHeader="name"
+          columns={columns}
+          sorting={sorting}
+          onChange={onTableChange}
+          loading={userLoading || userProcessing}
+        />
       )}
       {editModalVisible && (
         <EditModal

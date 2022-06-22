@@ -9,6 +9,7 @@ import {
   updateQuestionAPI,
   postQuestionAPI,
   getAnswersbyUsername,
+  deleteQuestionAPI,
 } from "./softfactorAPI";
 
 const initialState = {
@@ -26,49 +27,40 @@ const initialState = {
   error: null,
 };
 
+const defaultErrorMsg = "Something went wrong! Please try again later.";
+
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched. Thunks are
 // typically used to make async requests.
-export const addSF = createAsyncThunk("softfactor/postSF", async (params) => {
+export const addSF = createAsyncThunk("softfactor/addSF", async (params) => {
   const response = await postSF(params.newSoftFactor);
-  const data = await response.json();
-  return data;
+  return { status: response.status, data: await response.json() };
 });
 
-export const getSF = createAsyncThunk(
-  "softfactor/getSoftFactors",
-  async (thunkAPI) => {
-    const response = await getSoftFactors();
-    return await response.json();
-  }
-);
+export const getSF = createAsyncThunk("softfactor/getSF", async (thunkAPI) => {
+  const response = await getSoftFactors();
+  return { status: response.status, data: await response.json() };
+});
 
 export const updateSF = createAsyncThunk(
-  "softFactor/update",
+  "softFactor/updateSF",
   async (params) => {
     const response = await updateSoftFactor(
       params.id,
       params.updatedSoftFactor
     );
-    const text = await response.text();
-    // // The value we return becomes the `fulfilled` action payload
-    if (response.ok)
-      return {
-        text,
-        updatedSoftFactor: { id: params.id, ...params.updatedSoftFactor },
-      };
+    return { status: response.status, data: await response.json() };
   }
 );
 
 export const deleteSF = createAsyncThunk(
-  "softfactor/delete",
+  "softfactor/deleteSF",
   async (params) => {
     console.log(params.id);
     const response = await deleteSFAPI(params.id);
-    const text = await response.json();
-    if (response.ok) return { text };
+    return { status: response.status, data: await response.json() };
   }
 );
 
@@ -76,37 +68,31 @@ export const answerPost = createAsyncThunk(
   "softfactor/answerPost",
   async (params, thunkAPI) => {
     const response = await postAnswer(params.answers);
-    const json = await response.json();
-    return { status: response.status, ...json };
+    return { status: response.status, data: await response.json() };
   }
 );
 
-export const addQuestion = createAsyncThunk("question/post", async (params) => {
-  const response = await postQuestionAPI(params.newQuestion);
-  const data = await response.json();
-  return data;
-});
+export const addQuestion = createAsyncThunk(
+  "question/addQuestion",
+  async (params) => {
+    const response = await postQuestionAPI(params.newQuestion);
+    return { status: response.status, data: await response.json() };
+  }
+);
 
 export const getQuestionsBySFId = createAsyncThunk(
-  "softfactor/getQuestionsBySoftFactorId",
+  "softfactor/getQuestionsBySFId",
   async (params, thunkAPI) => {
     const response = await getQuestionsBySoftFactorId(params.id);
-    return await response.json();
+    return { status: response.status, data: await response.json() };
   }
 );
 
 export const updateQuestion = createAsyncThunk(
-  "questions/update",
+  "questions/updateQuestion",
   async (params) => {
-    console.log("params", params);
     const response = await updateQuestionAPI(params.id, params.updatedQuestion);
-    const text = await response.text();
-    // // The value we return becomes the `fulfilled` action payload
-    if (response.ok)
-      return {
-        text,
-        updatedQuestion: { id: params.id, ...params.updatedQuestion },
-      };
+    return { status: response.status, data: await response.json() };
   }
 );
 
@@ -114,8 +100,16 @@ export const getSFAnswersByUsername = createAsyncThunk(
   "softfactor/getSFAnswersByUsername",
   async (username, thunkAPI) => {
     const response = await getAnswersbyUsername(username);
-    const json = await response.json();
-    return { status: response.status, ...json };
+    return { status: response.status, data: await response.json() };
+  }
+);
+
+export const deleteQuestion = createAsyncThunk(
+  "softfactor/deleteQuestion",
+  async (params) => {
+    console.log(params.id);
+    const response = await deleteQuestionAPI(params.id);
+    return { status: response.status, data: await response.json() };
   }
 );
 
@@ -127,7 +121,11 @@ export const softfactorSlice = createSlice({
       state.selectedSoftFactor = action.payload;
     },
     selectQuestion(state, action) {
+      console.log(action.payload);
       state.selectedQuestion = action.payload;
+    },
+    clearQuestionsList(state) {
+      state.questions = null;
     },
     clearSoftFactorState(state) {
       state.loading = false;
@@ -144,54 +142,70 @@ export const softfactorSlice = createSlice({
     builder
       .addCase(addSF.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(addSF.fulfilled, (state, action) => {
+        const payload = action.payload;
+        console.log(payload);
+        if (payload.status === 200) {
+          state.message = payload.data.message;
+          state.softFactors = [...state.softFactors, payload.data.item];
+        } else state.error = payload.data.message;
         state.loading = false;
-        if (action.payload.status) state.loading = false;
-        else {
-          state.message = action.payload.message;
-          state.softFactors = [...state.softFactors, action.payload.item];
-          state.loading = false;
-        }
+      })
+      .addCase(addSF.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.loading = false;
       });
     builder
       .addCase(getSF.pending, (state) => {
         state.loading = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(getSF.fulfilled, (state, action) => {
-        state.loading = false;
-        if (action.payload.status) state.loading = false;
-        else {
-          state.softFactors = action.payload.item;
-          state.loading = false;
-        }
-        state.softFactors = action.payload.item;
+        const payload = action.payload;
+        if (payload.status === 200) {
+          state.softFactors = payload.data.item;
+          state.message = payload.data.message;
+        } else state.error = payload.data.message;
         state.loading = false;
       })
       .addCase(getSF.rejected, (state) => {
+        state.error = defaultErrorMsg;
         state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(updateSF.pending, (state) => {
         state.processing = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(updateSF.fulfilled, (state, action) => {
-        state.softFactors = [
-          ...state.softFactors.map((item) => {
-            if (item.id !== action.payload.updatedSoftFactor.id) {
-              // This isn't the item we care about - keep it as-is
-              return item;
-            }
-            // Otherwise, this is the one we want - return an updated value
-            return {
-              ...item,
-              ...action.payload.updatedSoftFactor,
-            };
-          }),
-        ];
+        const payload = action.payload;
+        if (payload.status === 200) {
+          state.softFactors = [
+            ...state.softFactors.map((element) => {
+              if (element.id !== payload.data.item.id) {
+                // This isn't the item we care about - keep it as-is
+                return element;
+              }
+              // Otherwise, this is the one we want - return an updated value
+              return {
+                ...element,
+                ...payload.data.item,
+              };
+            }),
+          ];
+        } else state.error = defaultErrorMsg;
         state.processing = false;
         state.selectedSoftFactor = null;
+      })
+      .addCase(updateSF.rejected, (state) => {
+        state.message = null;
+        state.error = defaultErrorMsg;
+        state.processing = false;
       });
     builder
       .addCase(answerPost.pending, (state) => {
@@ -200,84 +214,170 @@ export const softfactorSlice = createSlice({
         state.message = null;
       })
       .addCase(answerPost.fulfilled, (state, action) => {
-        console.log(action.payload);
-        state.loading = false;
-        if (action.payload.status === 200) {
+        const payload = action.payload;
+        if (payload.status === 200) {
           state.questionsAnswered = true;
-          state.message = action.payload.message;
+          state.message = payload.data.message;
           state.loading = false;
         } else {
-          state.error = action.payload.message;
+          state.error = payload.data.message;
         }
+        state.loading = false;
       })
       .addCase(answerPost.rejected, (state) => {
+        state.error = defaultErrorMsg;
         state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
       });
     builder
       .addCase(getQuestionsBySFId.pending, (state) => {
         state.loading = true;
+        state.error = null;
         state.message = null;
       })
       .addCase(getQuestionsBySFId.fulfilled, (state, action) => {
+        const payload = action.payload;
+        if (payload.status === 200) {
+          state.questions = payload.data.item;
+          state.test = payload.data.item;
+          state.message = payload.data.message;
+        } else state.error = payload.data.message;
         state.loading = false;
-        if (action.payload.status) state.loading = false;
-        else {
-          state.questions = action.payload.item;
-          state.message = action.payload.message;
-          state.loading = false;
-        }
       })
       .addCase(getQuestionsBySFId.rejected, (state) => {
+        state.error = defaultErrorMsg;
         state.loading = false;
-        state.error = "Something went wrong! Please try again later.";
       });
 
     builder
       .addCase(updateQuestion.pending, (state) => {
         state.processing = true;
+        state.error = null;
+        state.message = null;
       })
       .addCase(updateQuestion.fulfilled, (state, action) => {
-        state.questions = [
-          ...state.questions.map((item) => {
-            if (item.id !== action.payload.updatedQuestion.id) {
-              // This isn't the item we care about - keep it as-is
-              return item;
-            }
-            // Otherwise, this is the one we want - return an updated value
-            return {
-              ...item,
-              ...action.payload.updatedQuestion,
-            };
-          }),
-        ];
+        const payload = action.payload;
+        console.log(payload);
+        if (payload.status === 200) {
+          state.questions = [
+            ...state.questions.map((element) => {
+              if (element.id !== payload.data.item.id) {
+                // This isn't the item we care about - keep it as-is
+                return element;
+              }
+              // Otherwise, this is the one we want - return an updated value
+              return {
+                ...element,
+                ...payload.data.item,
+              };
+            }),
+          ];
+        } else state.error = payload.data.message;
         state.processing = false;
         state.selectedSoftFactor = null;
+      })
+      .addCase(updateQuestion.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.processing = false;
       });
 
     builder
       .addCase(getSFAnswersByUsername.pending, (state) => {
         state.answersLoading = true;
         state.error = null;
+        state.message = null;
       })
       .addCase(getSFAnswersByUsername.fulfilled, (state, action) => {
-        state.answersLoading = false;
-        if (action.payload.status === 200) {
-          state.answers = action.payload.item;
+        const payload = action.payload;
+        if (payload.status === 200) {
+          state.answers = payload.data.item;
         } else {
           state.error = action.payload.message;
         }
+        state.answersLoading = false;
       })
       .addCase(getSFAnswersByUsername.rejected, (state) => {
+        state.error = defaultErrorMsg;
         state.answersLoading = false;
-        state.error = "Something went wrong! Please try again later.";
+      });
+
+    builder
+      .addCase(addQuestion.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(addQuestion.fulfilled, (state, action) => {
+        const payload = action.payload;
+        console.log(payload);
+        if (payload.status === 200) {
+          state.questions = [...state.questions, payload.data.item];
+        } else {
+          state.error = defaultErrorMsg;
+        }
+        state.loading = false;
+      })
+      .addCase(addQuestion.rejected, (state) => {
+        state.error = defaultErrorMsg;
+        state.loading = false;
+      });
+    builder
+      .addCase(deleteSF.pending, (state) => {
+        state.processing = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(deleteSF.fulfilled, (state, action) => {
+        const payload = action.payload;
+        if (payload.status === 200) {
+          state.softFactors = [
+            ...state.softFactors.filter((element) => {
+              return element.id !== state.selectedSoftFactor.id;
+            }),
+          ];
+        } else state.error = defaultErrorMsg;
+        state.processing = false;
+        state.selectedSoftFactor = null;
+      })
+      .addCase(deleteSF.rejected, (state) => {
+        state.message = null;
+        state.error = defaultErrorMsg;
+        state.processing = false;
+      });
+    builder
+      .addCase(deleteQuestion.pending, (state) => {
+        state.processing = true;
+        state.error = null;
+        state.message = null;
+      })
+      .addCase(deleteQuestion.fulfilled, (state, action) => {
+        const payload = action.payload;
+        if (payload.status === 200) {
+          console.log(payload.data);
+          console.log(state.selectedQuestion.content);
+          state.questions = [
+            ...state.questions.filter((element) => {
+              return element.content !== state.selectedQuestion.content;
+            }),
+          ];
+        } else state.error = defaultErrorMsg;
+        state.processing = false;
+        state.selectedQuestion = null;
+      })
+      .addCase(deleteQuestion.rejected, (state) => {
+        state.message = null;
+        state.error = defaultErrorMsg;
+        state.processing = false;
       });
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { clearSoftFactorState, selectedSoftFactor, selectQuestion } =
-  softfactorSlice.actions;
+export const {
+  clearSoftFactorState,
+  clearQuestionsList,
+  selectedSoftFactor,
+  selectQuestion,
+} = softfactorSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
