@@ -8,6 +8,7 @@ import {
   EuiButtonIcon,
   EuiSpacer,
   EuiButton,
+  EuiCallOut,
 } from "@elastic/eui";
 import {
   getSF,
@@ -18,6 +19,9 @@ import {
   updateSF,
   addSF,
   deleteSF,
+  selectError,
+  selectSFProcessing,
+  selectMessage,
 } from "../../features/softfactor/softfactorSlice";
 import EditModal from "./EditModalSF";
 import AddModal from "./AddModal";
@@ -31,8 +35,11 @@ const SoftFactors = () => {
     dispatch(getSF());
   }, [dispatch]);
 
+  const message = useSelector(selectMessage);
+  const error = useSelector(selectError);
   const softFactors = useSelector(selectSoftFactors);
   const softFactorLoading = useSelector(selectLoading);
+  const processing = useSelector(selectSFProcessing);
 
   const selectSelectedSoftFactor = useSelector(selectSelectedSF);
   const [editModalVisible, setEditModalVisible] = useState(false);
@@ -82,13 +89,13 @@ const SoftFactors = () => {
 
   const showEditModal = (item) => {
     dispatch(selectedSoftFactor(item));
-    //setUpdatedUser(item);
     setEditModalVisible(true);
   };
 
   const showDeleteModal = (item) => {
     dispatch(selectedSoftFactor(item));
     setDeleteModalVisible(true);
+    console.log(softFactors);
   };
 
   const showAddModal = () => {
@@ -120,6 +127,7 @@ const SoftFactors = () => {
 
   const deleteSoftFactor = () => {
     dispatch(deleteSF({ id: selectSelectedSoftFactor.id }));
+    closeDeleteModal();
   };
 
   const handleUpdate = (e) => {
@@ -133,6 +141,12 @@ const SoftFactors = () => {
 
   return (
     <EuiPanel hasShadow={false}>
+      {error && (
+        <>
+          <EuiCallOut color="danger" iconType="alert" title={error} />
+          <EuiSpacer />
+        </>
+      )}
       <EuiButton onClick={() => showAddModal()}>Add Soft factor</EuiButton>
       {addModalVisible && (
         <AddModal
@@ -148,9 +162,17 @@ const SoftFactors = () => {
           items={softFactors}
           rowHeader="name"
           columns={columns}
-          loading={softFactorLoading}
+          loading={softFactorLoading || processing}
         />
       )}
+
+      {message && (
+        <>
+          <EuiCallOut title={message} />
+          <EuiSpacer />
+        </>
+      )}
+
       {editModalVisible && (
         <EditModal
           onClose={closeEditModal}

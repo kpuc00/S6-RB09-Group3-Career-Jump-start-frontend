@@ -10,6 +10,7 @@ import {
   EuiComboBox,
   EuiFlexGroup,
   EuiFlexItem,
+  EuiCallOut,
 } from "@elastic/eui";
 import {
   getSF,
@@ -21,9 +22,15 @@ import {
   updateQuestion,
   addQuestion,
   selectSoftFactors,
+  selectMessage,
+  selectError,
+  clearQuestionsList,
+  deleteQuestion,
+  selectSFProcessing,
 } from "../../features/softfactor/softfactorSlice";
 import EditModalQuestions from "./EditModalQuestions";
 import AddModalQuestion from "./AddModalQuestion";
+import DeleteModalQuestion from "./DeleteModalQuestion";
 
 const Questions = () => {
   const dispatch = useDispatch();
@@ -33,11 +40,15 @@ const Questions = () => {
     dispatch(getSF());
   }, [dispatch]);
 
+  const error = useSelector(selectError);
+  const message = useSelector(selectMessage);
   const softFactors = useSelector(selectSoftFactors);
   const questionsLoading = useSelector(selectLoading);
+  const processing = useSelector(selectSFProcessing);
   const questions = useSelector(selectQuestions);
   const selectedQuestion = useSelector(selectSelectedQ);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [addModalQuestionVisible, setAddModalQuestionVisible] = useState(false);
   const [newQuestion, setNewQuestion] = useState({});
   const [updatedQuestion, setUpdatedQuestion] = useState(null);
@@ -49,6 +60,22 @@ const Questions = () => {
   };
 
   const closeEditModal = () => setEditModalVisible(false);
+
+  const showDeleteModal = (item) => {
+    dispatch(selectQuestion(item));
+    setDeleteModalVisible(true);
+    console.log(questions);
+  };
+
+  const closeDeleteModal = () => setDeleteModalVisible(false);
+
+  const deleteQ = () => {
+    console.log(selectedQuestion);
+    const id = getQuestionID(selectedQuestion.content);
+    console.log(id);
+    dispatch(deleteQuestion({ id }));
+    closeDeleteModal();
+  };
 
   const actions = [
     {
@@ -68,7 +95,7 @@ const Questions = () => {
         return (
           <EuiButtonIcon
             color="danger"
-            //onClick={() => showDeleteModal(item)}
+            onClick={() => showDeleteModal(item)}
             iconType="trash"
             aria-label="Remove candidate"
           />
@@ -106,21 +133,24 @@ const Questions = () => {
     return questions.map((item) => ({ content: item.content }));
   }
 
-  const [selectedOptions, setSelected] = useState();
+  const [selectedOptions, setSelected] = useState([]);
 
   const onChange = (selectedOptions) => {
-    setSelected(selectedOptions);
-    const id = getSFId(selectedOptions[0].label);
-
-    dispatch(getQuestionsBySFId({ id }));
+    console.log(selectedOptions);
+    if (selectedOptions.length > 0) {
+      setSelected(selectedOptions);
+      const id = getSFId(selectedOptions[0].label);
+      dispatch(getQuestionsBySFId({ id }));
+    } else {
+      dispatch(clearQuestionsList());
+      setSelected([]);
+    }
   };
 
   function getQuestionID(title) {
-    console.log(questions);
     let found = "";
     questions.forEach((element) => {
       if (element.content === title) {
-        console.log("question id - ", element.id);
         found = element.id;
       }
     });
@@ -128,9 +158,7 @@ const Questions = () => {
   }
 
   const editQuestion = async () => {
-    console.log("this", updatedQuestion);
-
-    let idQ = getQuestionID(selectedQuestion.content);
+    const idQ = getQuestionID(selectedQuestion.content);
     dispatch(updateQuestion({ id: idQ, updatedQuestion }));
     setUpdatedQuestion(null);
     closeEditModal();
@@ -167,41 +195,58 @@ const Questions = () => {
 
   return (
     <EuiPanel hasShadow={false}>
-      <EuiFlexGroup justifyContent="spaceBetween">
-        <EuiFlexItem style={{ minWidth: 300 }} grow={false}>
-          <EuiComboBox
-            placeholder="Select soft factor"
-            options={getLabels(softFactors)}
-            selectedOptions={selectedOptions}
-            singleSelection={{ asPlainText: true }}
-            onChange={onChange}
-          />
-        </EuiFlexItem>
-        <EuiFlexItem grow={false} style={{ maxWidth: 150 }}>
-          <EuiButton onClick={() => showAddModalQuestion()}>
-            Add Question
-          </EuiButton>
-          {addModalQuestionVisible && (
-            <AddModalQuestion
-              onClose={closeAddModalQuestion}
-              onConfirm={postQuestion}
-              handleUpdate={handleAddQuestion}
-              newQuestion={newQuestion}
-              setNewQuestion={setNewQuestion}
+      {error && (
+        <>
+          <EuiCallOut color="danger" iconType="alert" title={error} />
+          <EuiSpacer />
+        </>
+      )}
+
+      {softFactors && (
+        <EuiFlexGroup justifyContent="spaceBetween">
+          <EuiFlexItem style={{ minWidth: 300 }} grow={false}>
+            <EuiComboBox
+              placeholder="Select soft factor"
+              options={getLabels(softFactors)}
+              selectedOptions={selectedOptions}
+              singleSelection={{ asPlainText: true }}
+              onChange={onChange}
             />
-          )}
-        </EuiFlexItem>
-      </EuiFlexGroup>
+          </EuiFlexItem>
+
+          <EuiFlexItem grow={false} style={{ maxWidth: 150 }}>
+            <EuiButton onClick={() => showAddModalQuestion()}>
+              Add Question
+            </EuiButton>
+            {addModalQuestionVisible && (
+              <AddModalQuestion
+                onClose={closeAddModalQuestion}
+                onConfirm={postQuestion}
+                handleUpdate={handleAddQuestion}
+                newQuestion={newQuestion}
+                setNewQuestion={setNewQuestion}
+              />
+            )}
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      )}
 
       <EuiSpacer />
-      {questions && (
+      {questions && questions.length > 0 && (
         <EuiBasicTable
           tableCaption="Soft factors"
           items={getQuestionContent(questions)}
           rowHeader="name"
           columns={columns}
-          loading={questionsLoading}
+          loading={questionsLoading || processing}
         />
+      )}
+
+      {message && (
+        <>
+          <EuiCallOut title={message} />
+          <EuiSpacer />
+        </>
       )}
 
       {editModalVisible && (
@@ -211,11 +256,9 @@ const Questions = () => {
           handleUpdate={handleUpdate}
         />
       )}
-      {/* {deleteModalVisible && (
-        <DeleteModalSF onCancel={closeDeleteModal}
-          onConfirm={deleteQuestion}
-        />
-      )} */}
+      {deleteModalVisible && (
+        <DeleteModalQuestion onCancel={closeDeleteModal} onConfirm={deleteQ} />
+      )}
     </EuiPanel>
   );
 };
