@@ -82,6 +82,7 @@ export const answerPost = createAsyncThunk(
 );
 
 export const addQuestion = createAsyncThunk("question/post", async (params) => {
+  console.log("slice", params.newQuestion);
   const response = await postQuestionAPI(params.newQuestion);
   const data = await response.json();
   return data;

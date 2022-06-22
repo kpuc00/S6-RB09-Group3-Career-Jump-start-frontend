@@ -26,7 +26,7 @@ import {
 } from "../../features/softfactor/softfactorSlice";
 import EditModalQuestions from "./EditModalQuestions";
 
-import AddModal from "./AddModal";
+import AddModalQuestion from "./AddModalQuestion";
 //import DeleteModalSF from "./DeleteModalSF";
 
 const Questions = () => {
@@ -42,8 +42,9 @@ const Questions = () => {
   const questions = useSelector(selectQuestions);
   const selectedQuestion = useSelector(selectSelectedQ);
   const [editModalVisible, setEditModalVisible] = useState(false);
+  const [addModalQuestionVisible, setAddModalQuestionVisible] = useState(false);
   //const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-
+  const [newQuestion, setNewQuestion] = useState({});
   const [updatedQuestion, setUpdatedQuestion] = useState(null);
 
   const showEditModal = (item) => {
@@ -146,6 +147,12 @@ const Questions = () => {
     closeEditModal();
   };
 
+  const handleAddQuestion = (e) => {
+    const field = e.target.name;
+    const newValue = e.target.value;
+    console.log({ field, newValue });
+  };
+
   const handleUpdate = (e) => {
     const field = e.target.name;
     const newValue = e.target.value;
@@ -157,20 +164,18 @@ const Questions = () => {
 
   const sf = useSelector(selectedSoftFactor);
 
-  const [addModalVisible, setAddModalVisible] = useState(false);
+  const closeAddModalQuestion = () => setAddModalQuestionVisible(false);
 
-  const closeAddModal = () => setAddModalVisible(false);
-
-  const showAddModal = () => {
-    setAddModalVisible(true);
-    console.log("show", addModalVisible);
+  const showAddModalQuestion = () => {
+    setAddModalQuestionVisible(true);
+    console.log("show", addModalQuestionVisible);
   };
 
   const postQuestion = () => {
-    console.log(sf);
-    dispatch(addQuestion({ newQuestion: updatedQuestion }));
-    setUpdatedQuestion(null);
-    closeAddModal();
+    console.log("newQuestion", newQuestion);
+    dispatch(addQuestion({ newQuestion }));
+    setNewQuestion(null);
+    closeAddModalQuestion();
   };
 
   return (
@@ -186,14 +191,16 @@ const Questions = () => {
           />
         </EuiFlexItem>
         <EuiFlexItem grow={false} style={{ maxWidth: 150 }}>
-          <EuiButton isDisabled={true} onClick={() => showAddModal()}>
+          <EuiButton onClick={() => showAddModalQuestion()}>
             Add Question
           </EuiButton>
-          {addModalVisible && (
-            <AddModal
-              onClose={closeAddModal}
+          {addModalQuestionVisible && (
+            <AddModalQuestion
+              onClose={closeAddModalQuestion}
               onConfirm={postQuestion}
-              handleUpdate={handleUpdate}
+              handleUpdate={handleAddQuestion}
+              newQuestion={newQuestion}
+              setNewQuestion={setNewQuestion}
             />
           )}
         </EuiFlexItem>
