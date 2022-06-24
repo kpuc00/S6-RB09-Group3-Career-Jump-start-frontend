@@ -8,11 +8,8 @@ describe("Create new user and then log in", function () {
 
     cy.visit("https://careerjumpapp.com/");
     cy.get("[id=home-register-button]").click();
-
     cy.url().should("include", "/register");
-
     cy.get("[id=register-candidate-button]").click();
-
     cy.url().should("include", "/candidate");
 
     //Registration form
