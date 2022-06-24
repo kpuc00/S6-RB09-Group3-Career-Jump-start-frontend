@@ -6,13 +6,10 @@ describe("Create new user and then log in", function () {
     let password = makePassword(3);
     let email = username + "@email.com";
 
-    cy.visit("https://careerjumpapp.com/");
+    cy.visit("http://localhost:3000");
     cy.get("[id=home-register-button]").click();
-
     cy.url().should("include", "/register");
-
     cy.get("[id=register-candidate-button]").click();
-
     cy.url().should("include", "/candidate");
 
     //Registration form
